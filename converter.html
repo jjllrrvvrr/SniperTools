@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Unit Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Converter specific styles */
+        
+        /* Tabs container */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+        
+        .tab-btn {
+            padding: 12px 30px;
+            border: 2px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--text-color);
+        }
+        
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+        
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Converter layout */
+        .converter-layout {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: end;
+        }
+        
+        .converter-side {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .converter-side label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .value-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+        
+        .value-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        .unit-select {
+            width: 100px;
+            padding: 14px 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .unit-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        /* Swap button */
+        .swap-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .swap-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: rotate(180deg);
+        }
+        
+        /* Quick conversions */
+        .quick-conversions {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .quick-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .quick-item {
+            padding: 10px 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-item:hover {
+            border-color: var(--accent-color);
+            background-color: var(--card-bg);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .converter-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .swap-btn {
+                width: 45px;
+                height: 45px;
+                margin: 0 auto;
+                transform: rotate(90deg);
+            }
+            
+            .swap-btn:hover {
+                transform: rotate(270deg);
+            }
+            
+            .value-input {
+                font-size: 1.1rem;
+            }
+            
+            .unit-select {
+                width: 90px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tabs-container {
+                gap: 8px;
+            }
+            
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 0.8rem;
+            }
+            
+            .input-wrapper {
+                flex-direction: column;
+            }
+            
+            .unit-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Unit Converter</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="distance">Distance</button>
+            <button class="tab-btn" data-tab="angle">Angle</button>
+        </div>
+
+        <!-- Distance Tab -->
+        <div class="card tab-content active" id="distance-tab">
+            <div class="converter-layout">
+                <div class="converter-side">
+                    <label>From</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="dist-input-1" class="value-input" placeholder="0" step="any">
+                        <select id="dist-unit-1" class="unit-select">
+                            <option value="mm">mm</option>
+                            <option value="cm">cm</option>
+                            <option value="m" selected>m</option>
+                            <option value="km">km</option>
+                            <option value="in">in</option>
+                            <option value="ft">ft</option>
+                            <option value="yd">yd</option>
+                            <option value="mi">mi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="swap-btn" id="dist-swap" title="Swap units">⇄</button>
+
+                <div class="converter-side">
+                    <label>To</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="dist-input-2" class="value-input" placeholder="0" step="any">
+                        <select id="dist-unit-2" class="unit-select">
+                            <option value="mm">mm</option>
+                            <option value="cm">cm</option>
+                            <option value="m">m</option>
+                            <option value="km">km</option>
+                            <option value="in">in</option>
+                            <option value="ft">ft</option>
+                            <option value="yd" selected>yd</option>
+                            <option value="mi">mi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-conversions">
+                <div class="quick-title">Quick Reference</div>
+                <div class="quick-grid">
+                    <div class="quick-item" data-val="100" data-from="m" data-to="yd">100m → yd</div>
+                    <div class="quick-item" data-val="300" data-from="m" data-to="yd">300m → yd</div>
+                    <div class="quick-item" data-val="500" data-from="m" data-to="yd">500m → yd</div>
+                    <div class="quick-item" data-val="800" data-from="m" data-to="yd">800m → yd</div>
+                    <div class="quick-item" data-val="1000" data-from="m" data-to="yd">1000m → yd</div>
+                    <div class="quick-item" data-val="1" data-from="km" data-to="mi">1km → mi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Angle Tab -->
+        <div class="card tab-content" id="angle-tab">
+            <div class="converter-layout">
+                <div class="converter-side">
+                    <label>From</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="angle-input-1" class="value-input" placeholder="0" step="any">
+                        <select id="angle-unit-1" class="unit-select">
+                            <option value="deg" selected>°</option>
+                            <option value="mils">mils</option>
+                            <option value="moa">MOA</option>
+                            <option value="rad">rad</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="swap-btn" id="angle-swap" title="Swap units">⇄</button>
+
+                <div class="converter-side">
+                    <label>To</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="angle-input-2" class="value-input" placeholder="0" step="any">
+                        <select id="angle-unit-2" class="unit-select">
+                            <option value="deg">°</option>
+                            <option value="mils" selected>mils</option>
+                            <option value="moa">MOA</option>
+                            <option value="rad">rad</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-conversions">
+                <div class="quick-title">Quick Reference</div>
+                <div class="quick-grid">
+                    <div class="quick-item" data-val="1" data-from="moa" data-to="mils">1 MOA → mils</div>
+                    <div class="quick-item" data-val="0.1" data-from="mils" data-to="moa">0.1 mil → MOA</div>
+                    <div class="quick-item" data-val="360" data-from="deg" data-to="mils">360° → mils</div>
+                    <div class="quick-item" data-val="6400" data-from="mils" data-to="deg">6400 mils → °</div>
+                    <div class="quick-item" data-val="90" data-from="deg" data-to="mils">90° → mils</div>
+                    <div class="quick-item" data-val="1" data-from="rad" data-to="deg">1 rad → °</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                // Update buttons
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Conversion factors to base units (meters for distance, degrees for angle)
+        const distFactors = {
+            mm: 0.001,
+            cm: 0.01,
+            m: 1,
+            km: 1000,
+            in: 0.0254,
+            ft: 0.3048,
+            yd: 0.9144,
+            mi: 1609.344
+        };
+
+        const angleFactors = {
+            deg: 1,
+            mils: 0.05625,  // 1 mil = 0.05625 degrees (6400 mils = 360 degrees)
+            moa: 1/60,      // 1 MOA = 1/60 degree
+            rad: 180/Math.PI // radians to degrees
+        };
+
+        // Distance converter
+        const distInput1 = document.getElementById('dist-input-1');
+        const distInput2 = document.getElementById('dist-input-2');
+        const distUnit1 = document.getElementById('dist-unit-1');
+        const distUnit2 = document.getElementById('dist-unit-2');
+        const distSwap = document.getElementById('dist-swap');
+
+        function convertDist(fromInput, toInput, fromUnit, toUnit) {
+            const value = parseFloat(fromInput.value);
+            if (isNaN(value)) {
+                toInput.value = '';
+                return;
+            }
+            
+            // Convert to meters first, then to target unit
+            const meters = value * distFactors[fromUnit];
+            const result = meters / distFactors[toUnit];
+            
+            // Format to reasonable precision
+            toInput.value = parseFloat(result.toFixed(6)).toString();
+        }
+
+        distInput1.addEventListener('input', () => {
+            convertDist(distInput1, distInput2, distUnit1.value, distUnit2.value);
+        });
+
+        distInput2.addEventListener('input', () => {
+            convertDist(distInput2, distInput1, distUnit2.value, distUnit1.value);
+        });
+
+        distUnit1.addEventListener('change', () => {
+            convertDist(distInput1, distInput2, distUnit1.value, distUnit2.value);
+        });
+
+        distUnit2.addEventListener('change', () => {
+            convertDist(distInput1, distInput2, distUnit1.value, distUnit2.value);
+        });
+
+        distSwap.addEventListener('click', () => {
+            // Swap units
+            const tempUnit = distUnit1.value;
+            distUnit1.value = distUnit2.value;
+            distUnit2.value = tempUnit;
+            
+            // Swap values
+            const tempVal = distInput1.value;
+            distInput1.value = distInput2.value;
+            distInput2.value = tempVal;
+        });
+
+        // Angle converter
+        const angleInput1 = document.getElementById('angle-input-1');
+        const angleInput2 = document.getElementById('angle-input-2');
+        const angleUnit1 = document.getElementById('angle-unit-1');
+        const angleUnit2 = document.getElementById('angle-unit-2');
+        const angleSwap = document.getElementById('angle-swap');
+
+        function convertAngle(fromInput, toInput, fromUnit, toUnit) {
+            const value = parseFloat(fromInput.value);
+            if (isNaN(value)) {
+                toInput.value = '';
+                return;
+            }
+            
+            // Convert to degrees first, then to target unit
+            const degrees = value * angleFactors[fromUnit];
+            const result = degrees / angleFactors[toUnit];
+            
+            // Format to reasonable precision
+            toInput.value = parseFloat(result.toFixed(6)).toString();
+        }
+
+        angleInput1.addEventListener('input', () => {
+            convertAngle(angleInput1, angleInput2, angleUnit1.value, angleUnit2.value);
+        });
+
+        angleInput2.addEventListener('input', () => {
+            convertAngle(angleInput2, angleInput1, angleUnit2.value, angleUnit1.value);
+        });
+
+        angleUnit1.addEventListener('change', () => {
+            convertAngle(angleInput1, angleInput2, angleUnit1.value, angleUnit2.value);
+        });
+
+        angleUnit2.addEventListener('change', () => {
+            convertAngle(angleInput1, angleInput2, angleUnit1.value, angleUnit2.value);
+        });
+
+        angleSwap.addEventListener('click', () => {
+            // Swap units
+            const tempUnit = angleUnit1.value;
+            angleUnit1.value = angleUnit2.value;
+            angleUnit2.value = tempUnit;
+            
+            // Swap values
+            const tempVal = angleInput1.value;
+            angleInput1.value = angleInput2.value;
+            angleInput2.value = tempVal;
+        });
+
+        // Quick conversion buttons
+        document.querySelectorAll('.quick-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const val = item.dataset.val;
+                const from = item.dataset.from;
+                const to = item.dataset.to;
+                
+                // Determine if distance or angle
+                const isDist = ['mm', 'cm', 'm', 'km', 'in', 'ft', 'yd', 'mi'].includes(from);
+                
+                if (isDist) {
+                    distInput1.value = val;
+                    distUnit1.value = from;
+                    distUnit2.value = to;
+                    convertDist(distInput1, distInput2, from, to);
+                    
+                    // Switch to distance tab
+                    tabBtns[0].click();
+                } else {
+                    angleInput1.value = val;
+                    angleUnit1.value = from;
+                    angleUnit2.value = to;
+                    convertAngle(angleInput1, angleInput2, from, to);
+                    
+                    // Switch to angle tab
+                    tabBtns[1].click();
+                }
+            });
+        });
+
+        // Initialize
+        loadTheme();
+    </script>
+</body>
+</html>

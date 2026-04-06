@@ -69,7 +69,27 @@ Calculate distance and bearing between two MGRS coordinates.
 
 ---
 
-### 4. Judging Distance Skills
+### 4. Unit Converter
+
+Convert between metric and imperial units for distance and angular measurements.
+
+**Purpose:** Quick conversion between different measurement systems commonly used in precision shooting.
+
+**Features:**
+- **Distance:** mm, cm, m, km, inches, feet, yards, miles
+- **Angle:** degrees, mils, MOA, radians
+- Bidirectional conversion (edit either field)
+- Swap button for quick unit inversion
+- Quick reference presets
+
+**Examples:**
+- 100m = 109.36 yards
+- 1 MOA = 0.291 mils
+- 1 mil = 3.438 MOA
+
+---
+
+### 5. Judging Distance Skills
 
 Training tool for distance estimation exercises.
 
