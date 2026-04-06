@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNIPER - JUDGING DISTANCE CALCULATOR</title>
+    <title>JD CALCULATOR</title>
     <style>
         :root {
             --bg-color: #f5f5f5;
@@ -13,13 +13,12 @@
             --border-color: #e0e0e0;
             --input-bg: #ffffff;
             --input-border: #cccccc;
-            --accent-color: #2c3e50;
-            --accent-hover: #34495e;
-            --minus-color: #e74c3c;
-            --plus-color: #27ae60;
+            --accent-color: #333333;
+            --accent-hover: #1a1a1a;
             --alert-color: #e67e22;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --percent-badge-bg: #ecf0f1;
+            --cell-bg: #f8f9fa;
+            --cell-border: #dee2e6;
         }
 
         [data-theme="dark"] {
@@ -30,13 +29,12 @@
             --border-color: #404040;
             --input-bg: #3d3d3d;
             --input-border: #505050;
-            --accent-color: #5dade2;
-            --accent-hover: #3498db;
-            --minus-color: #ec7063;
-            --plus-color: #58d68d;
+            --accent-color: #e0e0e0;
+            --accent-hover: #f5f5f5;
             --alert-color: #f39c12;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --percent-badge-bg: #404040;
+            --cell-bg: #3d3d3d;
+            --cell-border: #505050;
         }
 
         * {
@@ -55,7 +53,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -82,27 +80,13 @@
             max-width: 100px;
             max-height: 100px;
             object-fit: contain;
-            transform: scale(0.8);
+            transform: scale(1);
             transform-origin: left center;
             transition: transform 0.3s ease;
         }
 
         .logo:hover {
             transform: scale(1.05);
-        }
-
-        @media (max-width: 480px) {
-            .logo {
-                transform: scale(1);
-            }
-
-            .logo:hover {
-                transform: scale(1.05);
-            }
-
-            .logo-title {
-                gap: 10px;
-            }
         }
 
         h1 {
@@ -116,11 +100,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .theme-toggle span {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
         }
 
         .toggle-btn {
@@ -155,134 +134,112 @@
             transform: translateX(24px);
         }
 
-        .row {
+        .targets-table {
+            width: 100%;
             background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 15px;
+            border-radius: 12px;
             box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            flex-wrap: wrap;
+            overflow: hidden;
         }
 
-        .row.alert {
-            border-left: 4px solid var(--alert-color);
-            background-color: rgba(230, 126, 34, 0.1);
-        }
-
-        .row-label {
+        .table-header {
+            display: grid;
+            grid-template-columns: 100px 1fr 120px 120px auto;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: var(--accent-color);
+            color: white;
             font-weight: 600;
-            min-width: 60px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .input-group {
-            flex: 1;
-            min-width: 120px;
-            position: relative;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        input[type="number"] {
+        .table-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 120px 120px auto;
+            gap: 10px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row:hover {
+            background-color: var(--cell-bg);
+        }
+
+        .table-row.alert {
+            background-color: rgba(230, 126, 34, 0.1);
+        }
+
+        .table-row.alert:hover {
+            background-color: rgba(230, 126, 34, 0.15);
+        }
+
+        .cell-target {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .cell-input input {
             width: 100%;
-            padding: 10px 12px;
+            height: 46px;
+            padding: 0 12px;
             border: 2px solid var(--input-border);
-            border-radius: 6px;
+            border-radius: 8px;
             background-color: var(--input-bg);
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        input[type="number"]:focus {
+        .cell-input input:focus {
             outline: none;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
         }
 
-        [data-theme="dark"] input[type="number"]:focus {
-            box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.2);
+        [data-theme="dark"] .cell-input input:focus {
+            box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.2);
         }
 
-        .results {
+        .cell-min, .cell-max {
+            text-align: center;
+            height: 46px;
+            padding: 0 12px;
+            background-color: var(--cell-bg);
+            border: 2px solid var(--cell-border);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex: 2;
-            min-width: 280px;
-            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .result-item {
-            flex: 1;
-            min-width: 100px;
-            text-align: center;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s ease;
-        }
-
-        .result-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            display: block;
-        }
-
-        .result-minus .result-value {
-            color: var(--minus-color);
-        }
-
-        .result-plus .result-value {
-            color: var(--plus-color);
-        }
-
-        .result-label {
-            font-size: 0.7rem;
+        .cell-min:empty::before, .cell-max:empty::before {
+            content: '-';
             color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 3px;
         }
 
-        .percent-badge {
-            background-color: var(--percent-badge-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .alert-indicator {
+        .cell-alert {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--alert-color);
-            font-size: 1.2rem;
-            display: none;
+            font-size: 1.3rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .row.alert .alert-indicator {
-            display: block;
-        }
-
-        .row.alert .alert-indicator::after {
-            content: '⚠️ >1000m';
-            font-size: 0.75rem;
-            margin-left: 5px;
-            font-weight: 600;
+        .table-row.alert .cell-alert {
+            opacity: 1;
         }
 
         .reset-section {
@@ -342,38 +299,80 @@
             border-radius: 50%;
         }
 
-        .legend-dot.range1 { background-color: #e74c3c; }
-        .legend-dot.range2 { background-color: #f39c12; }
-        .legend-dot.range3 { background-color: #27ae60; }
-
-        .empty-state {
-            color: var(--text-secondary);
-            font-style: italic;
-        }
+        .legend-dot.range1 { background-color: #666666; }
+        .legend-dot.range2 { background-color: #888888; }
+        .legend-dot.range3 { background-color: #aaaaaa; }
 
         @media (max-width: 768px) {
-            .row {
-                flex-direction: column;
-                align-items: stretch;
+            .table-header {
+                display: none;
             }
 
-            .row-label {
+            .table-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .cell-target {
+                grid-column: 1 / -1;
                 text-align: center;
-                margin-bottom: 10px;
+                font-size: 1.1rem;
+                padding-bottom: 5px;
+                border-bottom: 1px solid var(--border-color);
             }
 
-            .results {
-                flex-direction: row;
-                justify-content: space-between;
+            .cell-input {
+                grid-column: 1 / -1;
             }
 
-            .result-item {
-                flex: 1;
+            .cell-min {
+                grid-column: 1;
+                position: relative;
             }
 
-            .percent-badge {
-                align-self: center;
-                margin: 10px 0;
+            .cell-max {
+                grid-column: 2;
+                position: relative;
+            }
+
+            .cell-min::before {
+                content: 'MIN';
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: var(--card-bg);
+                padding: 0 8px;
+                font-size: 0.65rem;
+                color: var(--text-secondary);
+                font-weight: 600;
+            }
+
+            .cell-max::before {
+                content: 'MAX';
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: var(--card-bg);
+                padding: 0 8px;
+                font-size: 0.65rem;
+                color: var(--text-secondary);
+                font-weight: 600;
+            }
+
+            .cell-alert {
+                grid-column: 1 / -1;
+                font-size: 1rem;
+            }
+
+            .table-row.alert .cell-alert::after {
+                content: ' > 1000m';
+                font-size: 0.85rem;
+                margin-left: 5px;
             }
         }
 
@@ -382,26 +381,16 @@
                 padding: 15px;
             }
 
-            .results {
-                flex-direction: column;
+            .logo {
+                transform: scale(1);
+            }
+
+            .logo-title {
                 gap: 10px;
             }
 
-            .result-item {
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 15px;
-            }
-
-            .result-value {
-                font-size: 1.1rem;
-            }
-
-            .result-label {
-                margin-top: 0;
-                font-size: 0.65rem;
+            .targets-table {
+                border-radius: 8px;
             }
         }
     </style>
@@ -418,9 +407,18 @@
             </div>
         </header>
 
-        <main id="rowsContainer">
-            <!-- Les 10 lignes seront générées par JavaScript -->
-        </main>
+        <div class="targets-table">
+            <div class="table-header">
+                <div>Target</div>
+                <div>Distance (m)</div>
+                <div>Min (m)</div>
+                <div>Max (m)</div>
+                <div></div>
+            </div>
+            <div id="tableBody">
+                <!-- Les 10 lignes seront générées par JavaScript -->
+            </div>
+        </div>
 
         <div class="reset-section">
             <button class="reset-btn" id="resetBtn">Reset</button>
@@ -476,31 +474,21 @@
         themeToggle.addEventListener('click', toggleTheme);
 
         // Génération des 10 lignes
-        const rowsContainer = document.getElementById('rowsContainer');
+        const tableBody = document.getElementById('tableBody');
 
         function createRow(index) {
             const row = document.createElement('div');
-            row.className = 'row';
+            row.className = 'table-row';
             row.dataset.index = index;
             
             row.innerHTML = `
-                <div class="row-label">Target ${index + 1}</div>
-                <div class="input-group">
-                    <label for="distance-${index}">Distance (m)</label>
-                    <input type="number" id="distance-${index}" min="0" step="1" placeholder="0">
+                <div class="cell-target">Target ${index + 1}</div>
+                <div class="cell-input">
+                    <input type="number" id="distance-${index}" min="0" step="1" placeholder="Entrez la distance">
                 </div>
-                <div class="alert-indicator">⚠️</div>
-                <div class="results">
-                    <div class="result-item result-minus">
-                        <span class="result-value" id="minus-${index}">-</span>
-                        <div class="result-label">Moins %</div>
-                    </div>
-                    <div class="percent-badge" id="percent-${index}">-</div>
-                    <div class="result-item result-plus">
-                        <span class="result-value" id="plus-${index}">-</span>
-                        <div class="result-label">Plus %</div>
-                    </div>
-                </div>
+                <div class="cell-min" id="min-${index}"></div>
+                <div class="cell-max" id="max-${index}"></div>
+                <div class="cell-alert">⚠️</div>
             `;
             
             return row;
@@ -508,7 +496,7 @@
 
         // Créer les 10 lignes
         for (let i = 0; i < 10; i++) {
-            rowsContainer.appendChild(createRow(i));
+            tableBody.appendChild(createRow(i));
         }
 
         // Logique de calcul
@@ -525,27 +513,25 @@
         }
 
         function calculateValues(distance, percent) {
-            const minus = distance * (1 - percent / 100);
-            const plus = distance * (1 + percent / 100);
+            const min = distance * (1 - percent / 100);
+            const max = distance * (1 + percent / 100);
             return {
-                minus: Math.round(minus),
-                plus: Math.round(plus)
+                min: Math.round(min),
+                max: Math.round(max)
             };
         }
 
         function updateRow(index) {
             const input = document.getElementById(`distance-${index}`);
-            const row = input.closest('.row');
-            const percentBadge = document.getElementById(`percent-${index}`);
-            const minusValue = document.getElementById(`minus-${index}`);
-            const plusValue = document.getElementById(`plus-${index}`);
+            const row = input.closest('.table-row');
+            const minCell = document.getElementById(`min-${index}`);
+            const maxCell = document.getElementById(`max-${index}`);
             
             const distance = parseFloat(input.value);
             
             if (isNaN(distance) || distance === '') {
-                percentBadge.textContent = '-';
-                minusValue.textContent = '-';
-                plusValue.textContent = '-';
+                minCell.textContent = '';
+                maxCell.textContent = '';
                 row.classList.remove('alert');
                 return;
             }
@@ -560,9 +546,8 @@
             const percent = getPercent(distance);
             const values = calculateValues(distance, percent);
             
-            percentBadge.textContent = `±${percent}%`;
-            minusValue.textContent = values.minus;
-            plusValue.textContent = values.plus;
+            minCell.textContent = values.min;
+            maxCell.textContent = values.max;
         }
 
         // Écouteurs d'événements pour chaque input
@@ -605,15 +590,13 @@
             if (confirm('Voulez-vous vraiment réinitialiser toutes les valeurs ?')) {
                 for (let i = 0; i < 10; i++) {
                     const input = document.getElementById(`distance-${i}`);
-                    const row = input.closest('.row');
-                    const percentBadge = document.getElementById(`percent-${i}`);
-                    const minusValue = document.getElementById(`minus-${i}`);
-                    const plusValue = document.getElementById(`plus-${i}`);
+                    const row = input.closest('.table-row');
+                    const minCell = document.getElementById(`min-${index}`);
+                    const maxCell = document.getElementById(`max-${index}`);
                     
                     input.value = '';
-                    percentBadge.textContent = '-';
-                    minusValue.textContent = '-';
-                    plusValue.textContent = '-';
+                    document.getElementById(`min-${i}`).textContent = '';
+                    document.getElementById(`max-${i}`).textContent = '';
                     row.classList.remove('alert');
                 }
                 localStorage.removeItem('sniperData');
