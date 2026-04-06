@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Loophole Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Specific styles for Loophole Calculator */
+        :root {
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+        }
+
+        [data-theme="dark"] {
+            --success-color: #4ade80;
+            --danger-color: #f87171;
+        }
+
+        .calculator-container {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .preset-selector {
+            margin-bottom: 20px;
+        }
+
+        .preset-selector label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            width: 100%;
+        }
+
+        .preset-btn {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--accent-color);
+        }
+
+        .preset-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            padding: 12px 10px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            transition: border-color 0.3s ease;
+            width: 100%;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .input-group .unit {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .results-section {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .aim-recommendation {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-box {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .result-value.high {
+            color: var(--alert-color);
+        }
+
+        .result-value.low {
+            color: #60a5fa;
+        }
+
+        .go-result {
+            border-color: var(--success-color);
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .go-result .result-value {
+            color: var(--success-color);
+        }
+
+        .no-go-result {
+            border-color: var(--danger-color);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .no-go-result .result-value {
+            color: var(--danger-color);
+        }
+
+        .canvas-section {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .canvas-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        #reticleCanvas {
+            width: 400px;
+            height: 400px;
+            max-width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .formula-note {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info-section {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .info-section h3 {
+            font-size: 1rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section h3::before {
+            content: 'ℹ️';
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .info-block {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .info-block h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .info-block p {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .info-block ul {
+            margin-left: 20px;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .info-block li {
+            margin-bottom: 5px;
+        }
+
+        .info-block code {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg-color);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            color: var(--accent-color);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-symbol {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .legend-symbol.cross {
+            color: var(--text-color);
+        }
+
+        .legend-symbol.dot {
+            color: #ef4444;
+        }
+
+        .legend-symbol.rect {
+            width: 30px;
+            height: 15px;
+            background-color: rgba(100, 100, 100, 0.3);
+            border: 1px solid rgba(150, 150, 150, 0.6);
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .inputs-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .result-value {
+                font-size: 1.5rem;
+            }
+
+            .preset-buttons {
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .info-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .inputs-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .input-group input {
+                padding: 10px 8px;
+                font-size: 0.95rem;
+            }
+
+            .aim-recommendation {
+                font-size: 1rem;
+            }
+
+            .result-value {
+                font-size: 1.3rem;
+            }
+
+            .info-block {
+                padding: 15px;
+            }
+
+            .info-block ul,
+            .info-block ol {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Loophole Calculator</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="calculator-container">
+            <div class="preset-selector">
+                <label>Rifle Preset</label>
+                <div class="preset-buttons">
+                    <button class="preset-btn" data-hob="7.2">AX338 (7.2 cm)</button>
+                    <button class="preset-btn" data-hob="8.8">SCAR-HPR (8.8 cm)</button>
+                    <button class="preset-btn" data-hob="7.6">Barret .50 (7.6 cm)</button>
+                    <button class="preset-btn active" data-hob-custom="true">Custom</button>
+                </div>
+            </div>
+
+            <div class="inputs-grid">
+                <div class="input-group">
+                    <label>Height Over Bore</label>
+                    <input type="number" id="hobInput" value="6.86" step="0.1" min="0">
+                    <span class="unit">cm</span>
+                </div>
+                <div class="input-group">
+                    <label>Distance to Loophole</label>
+                    <input type="number" id="distInput" value="10" step="0.5" min="0.1">
+                    <span class="unit">meters</span>
+                </div>
+                <div class="input-group">
+                    <label>Dialed Elevation</label>
+                    <input type="number" id="elevInput" value="5.2" step="0.1">
+                    <span class="unit">Mils</span>
+                </div>
+                <div class="input-group">
+                    <label>Loophole Height</label>
+                    <input type="number" id="holeInput" value="10" step="1" min="1">
+                    <span class="unit">cm</span>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="aim-recommendation" id="aimRecommendation">Enter parameters to calculate</div>
+                <div class="results-grid">
+                    <div class="result-box" id="pathResultBox">
+                        <div class="result-label">Bullet Path vs LOS</div>
+                        <div class="result-value" id="pathValue">--</div>
+                    </div>
+                    <div class="result-box" id="decisionResultBox">
+                        <div class="result-label">Decision</div>
+                        <div class="result-value" id="decisionValue">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-section">
+                <div class="canvas-title">Sight Picture</div>
+                <canvas id="reticleCanvas"></canvas>
+                <div class="formula-note">
+                    Formula: Bullet Path = -(HOB × 10 / Dist) + Elev
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>How to Use This Calculator</h3>
+                
+                <div class="info-grid">
+                    <div class="info-block">
+                        <h4>Inputs Explained</h4>
+                        <ul>
+                            <li><strong>Height Over Bore:</strong> Distance from barrel center to scope center (use presets or measure)</li>
+                            <li><strong>Distance to Loophole:</strong> Distance from your position to the obstacle opening</li>
+                            <li><strong>Dialed Elevation:</strong> Elevation dialed on scope for your target</li>
+                            <li><strong>Loophole Height:</strong> Height of the opening you're shooting through</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block">
+                        <h4>Sight Picture Legend</h4>
+                        <div class="legend-item">
+                            <span class="legend-symbol cross">✚</span>
+                            <span>Your line of sight (where you aim)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-symbol dot">●</span>
+                            <span>Actual bullet path (projectile position)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-symbol rect"></span>
+                            <span>Loophole opening (obstacle)</span>
+                        </div>
+                        <p style="margin-top: 15px;">The <strong>red dot</strong> shows where your bullet actually passes relative to your crosshair.</p>
+                    </div>
+
+                    <div class="info-block">
+                        <h4>Understanding Results</h4>
+                        <ul>
+                            <li><strong>Aim Top 1/3rd:</strong> Bullet passes below LOS. Aim at upper third of loophole.</li>
+                            <li><strong>Aim Bottom 1/3rd:</strong> Bullet passes above LOS. Aim at lower third of loophole.</li>
+                            <li><strong>GO:</strong> Bullet stays within loophole with recommended aim.</li>
+                            <li><strong>NO-GO:</strong> Bullet will hit the obstacle. Change position or don't shoot.</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block">
+                        <h4>The Physics</h4>
+                        <p>When you dial elevation for a distant target:</p>
+                        <ol style="margin-left: 20px; font-size: 0.85rem; line-height: 1.8;">
+                            <li>Your barrel tilts upward</li>
+                            <li>Your scope remains level (mechanical offset)</li>
+                            <li>At short distance (loophole), bullet is still rising</li>
+                            <li>Result: Bullet passes above or below your line of sight</li>
+                        </ol>
+                        <p style="margin-top: 10px;">Formula: <code>Bullet Path = -(HOB × 10 / Distance) + Dialed Elevation</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const hobInput = document.getElementById('hobInput');
+        const distInput = document.getElementById('distInput');
+        const elevInput = document.getElementById('elevInput');
+        const holeInput = document.getElementById('holeInput');
+        const aimRecommendation = document.getElementById('aimRecommendation');
+        const pathResultBox = document.getElementById('pathResultBox');
+        const pathValue = document.getElementById('pathValue');
+        const decisionResultBox = document.getElementById('decisionResultBox');
+        const decisionValue = document.getElementById('decisionValue');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+        const themeToggle = document.getElementById('themeToggle');
+        const canvas = document.getElementById('reticleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Canvas setup
+        let centerX, centerY, pixelsPerMil;
+
+        function setupCanvas() {
+            // Fixed dimensions for the canvas
+            const size = 400;
+            canvas.width = size;
+            canvas.height = size;
+            centerX = size / 2;
+            centerY = size / 2;
+            pixelsPerMil = size / 20;
+        }
+
+        function drawReticle() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Use CSS variable color for crosshair
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const crosshairColor = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)';
+            const tickColor = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)';
+            const labelColor = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+            const centerDotColor = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
+            
+            // Draw crosshair lines
+            ctx.strokeStyle = crosshairColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, canvas.height);
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(canvas.width, centerY);
+            ctx.stroke();
+
+            // Draw center dot
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = centerDotColor;
+            ctx.fill();
+
+            // Draw mil ticks
+            ctx.strokeStyle = tickColor;
+            ctx.fillStyle = labelColor;
+            ctx.font = `${pixelsPerMil / 3}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 1; i <= 10; i++) {
+                const tickSize = (i % 5 === 0) ? 10 : 5;
+                
+                // Vertical ticks
+                ctx.beginPath();
+                ctx.moveTo(centerX - tickSize, centerY + i * pixelsPerMil);
+                ctx.lineTo(centerX + tickSize, centerY + i * pixelsPerMil);
+                ctx.moveTo(centerX - tickSize, centerY - i * pixelsPerMil);
+                ctx.lineTo(centerX + tickSize, centerY - i * pixelsPerMil);
+                ctx.stroke();
+
+                // Horizontal ticks
+                ctx.beginPath();
+                ctx.moveTo(centerX + i * pixelsPerMil, centerY - tickSize);
+                ctx.lineTo(centerX + i * pixelsPerMil, centerY + tickSize);
+                ctx.moveTo(centerX - i * pixelsPerMil, centerY - tickSize);
+                ctx.lineTo(centerX - i * pixelsPerMil, centerY + tickSize);
+                ctx.stroke();
+
+                // Labels
+                if (i % 2 === 0) {
+                    ctx.fillText(i, centerX + tickSize + 12, centerY + i * pixelsPerMil);
+                    ctx.fillText(i, centerX + tickSize + 12, centerY - i * pixelsPerMil);
+                    ctx.fillText(i, centerX + i * pixelsPerMil, centerY + tickSize + 12);
+                    ctx.fillText(i, centerX - i * pixelsPerMil, centerY + tickSize + 12);
+                }
+            }
+        }
+
+        function drawScene(loopholeMils, bulletPathMils) {
+            if (!loopholeMils || isNaN(bulletPathMils)) return;
+
+            const loopholeHeightPx = loopholeMils * pixelsPerMil;
+            const loopholeWidthPx = 5 * pixelsPerMil;
+            const offset = loopholeMils / 6;
+
+            // Position loophole based on aim
+            let loopholeCenterY;
+            if (bulletPathMils > 0) {
+                loopholeCenterY = centerY - offset * pixelsPerMil;
+            } else {
+                loopholeCenterY = centerY + offset * pixelsPerMil;
+            }
+
+            // Draw loophole
+            ctx.fillStyle = 'rgba(100, 100, 100, 0.3)';
+            ctx.strokeStyle = 'rgba(150, 150, 150, 0.6)';
+            ctx.lineWidth = 2;
+            const loopholeTop = loopholeCenterY - loopholeHeightPx / 2;
+            ctx.fillRect(centerX - loopholeWidthPx / 2, loopholeTop, loopholeWidthPx, loopholeHeightPx);
+            ctx.strokeRect(centerX - loopholeWidthPx / 2, loopholeTop, loopholeWidthPx, loopholeHeightPx);
+
+            // Draw bullet path indicator
+            const bulletY = centerY - bulletPathMils * pixelsPerMil;
+            ctx.beginPath();
+            ctx.arc(centerX, bulletY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ef4444';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function calculate() {
+            const hob = parseFloat(hobInput.value) || 0;
+            const dist = parseFloat(distInput.value) || 0;
+            const elev = parseFloat(elevInput.value) || 0;
+            const hole = parseFloat(holeInput.value) || 0;
+
+            if (dist <= 0 || hole <= 0) {
+                aimRecommendation.textContent = 'Enter valid parameters';
+                pathValue.textContent = '--';
+                decisionValue.textContent = '--';
+                pathResultBox.className = 'result-box';
+                decisionResultBox.className = 'result-box';
+                drawReticle();
+                return;
+            }
+
+            // Calculate
+            const loopholeMils = (hole * 10) / dist;
+            const offsetMils = -1 * (hob * 10) / dist;
+            const bulletPath = offsetMils + elev;
+            const availableClearance = (loopholeMils * 2) / 3;
+
+            let aimText, isGo;
+
+            if (bulletPath < 0) {
+                aimText = 'Aim Top 1/3rd';
+                isGo = Math.abs(bulletPath) < availableClearance;
+            } else {
+                aimText = 'Aim Bottom 1/3rd';
+                isGo = bulletPath < availableClearance;
+            }
+
+            // Update UI
+            aimRecommendation.textContent = aimText;
+
+            const pathRounded = bulletPath.toFixed(2);
+            if (bulletPath >= 0) {
+                pathValue.innerHTML = `↑ ${pathRounded} Mils`;
+                pathValue.className = 'result-value high';
+            } else {
+                pathValue.innerHTML = `↓ ${Math.abs(pathRounded)} Mils`;
+                pathValue.className = 'result-value low';
+            }
+
+            if (isGo) {
+                decisionValue.textContent = 'GO';
+                decisionResultBox.className = 'result-box go-result';
+            } else {
+                decisionValue.textContent = 'NO-GO';
+                decisionResultBox.className = 'result-box no-go-result';
+            }
+
+            // Draw
+            setupCanvas();
+            drawReticle();
+            drawScene(loopholeMils, bulletPath);
+        }
+
+        // Preset buttons
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                presetBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Only update HOB if it's a preset with value
+                if (btn.dataset.hob) {
+                    hobInput.value = btn.dataset.hob;
+                }
+                calculate();
+            });
+        });
+
+        // Input listeners
+        [distInput, elevInput, holeInput].forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // HOB input with custom detection
+        hobInput.addEventListener('input', () => {
+            // Check if current value matches any preset
+            const currentValue = parseFloat(hobInput.value).toFixed(2);
+            let matchesPreset = false;
+            
+            presetBtns.forEach(btn => {
+                if (btn.dataset.hob) {
+                    const presetValue = parseFloat(btn.dataset.hob).toFixed(2);
+                    if (currentValue === presetValue) {
+                        matchesPreset = true;
+                        // Activate this preset button
+                        presetBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    }
+                }
+            });
+            
+            // If no preset matches, activate Custom
+            if (!matchesPreset) {
+                presetBtns.forEach(b => {
+                    if (!b.dataset.hob) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            }
+            
+            calculate();
+        });
+
+        // Theme toggle
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+            calculate();
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Window resize
+        window.addEventListener('resize', calculate);
+
+        // Init
+        loadTheme();
+        setupCanvas();
+        drawReticle();
+        calculate();
+    </script>
+</body>
+</html>

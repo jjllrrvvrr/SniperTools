@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - MGRS Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Specific styles for MGRS Calculator */
+        .calculator-container {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .points-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .point-card {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+
+        .point-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .coord-grid {
+            display: grid;
+            grid-template-columns: 70px 70px 1fr 1fr;
+            gap: 8px;
+            align-items: end;
+        }
+
+        .zone-input {
+            width: 100%;
+        }
+
+        .square-input {
+            width: 100%;
+        }
+
+        .coord-input {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .input-group input, .input-group select {
+            padding: 8px 5px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .zone-input {
+            text-transform: uppercase;
+        }
+
+        .square-input {
+            text-transform: uppercase;
+        }
+
+        .coord-input {
+            letter-spacing: 2px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .calculate-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-display {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-item h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .bearing-full {
+            font-size: 1.3rem;
+            margin-top: 5px;
+        }
+
+        .direction-arrow {
+            font-size: 1.5rem;
+            margin-left: 10px;
+        }
+
+        .history-section {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .history-section h3 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .history-coords {
+            color: var(--text-secondary);
+        }
+
+        .history-result {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .history-bearing {
+            color: var(--text-color);
+        }
+
+        .clear-history {
+            margin-top: 15px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .empty-history {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .points-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .coord-grid {
+                grid-template-columns: 70px 70px 1fr 1fr;
+                gap: 8px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .result-value {
+                font-size: 1.8rem;
+            }
+
+            .bearing-full {
+                font-size: 1.1rem;
+            }
+
+            .history-item {
+                grid-template-columns: 1fr;
+                gap: 5px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .point-card {
+                padding: 15px;
+            }
+
+            .coord-grid {
+                grid-template-columns: 60px 60px 1fr 1fr;
+                gap: 6px;
+            }
+
+            .input-group input, .input-group select {
+                padding: 8px 5px;
+                font-size: 0.9rem;
+            }
+
+            .result-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">MGRS Calculator</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="calculator-container">
+            <div class="points-container">
+                <div class="point-card">
+                    <h3>Point A</h3>
+                    <div class="coord-grid">
+                        <div class="input-group">
+                            <label>Zone</label>
+                            <input type="text" id="zoneA" class="zone-input" placeholder="38T" maxlength="3">
+                        </div>
+                        <div class="input-group">
+                            <label>Square</label>
+                            <input type="text" id="squareA" class="square-input" placeholder="MN" maxlength="2">
+                        </div>
+                        <div class="input-group">
+                            <label>Easting</label>
+                            <input type="text" id="eastingA" class="coord-input" placeholder="1234" maxlength="4" pattern="\d{4}">
+                        </div>
+                        <div class="input-group">
+                            <label>Northing</label>
+                            <input type="text" id="northingA" class="coord-input" placeholder="5678" maxlength="4" pattern="\d{4}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="point-card">
+                    <h3>Point B</h3>
+                    <div class="coord-grid">
+                        <div class="input-group">
+                            <label>Zone</label>
+                            <input type="text" id="zoneB" class="zone-input" placeholder="38T" maxlength="3">
+                        </div>
+                        <div class="input-group">
+                            <label>Square</label>
+                            <input type="text" id="squareB" class="square-input" placeholder="MN" maxlength="2">
+                        </div>
+                        <div class="input-group">
+                            <label>Easting</label>
+                            <input type="text" id="eastingB" class="coord-input" placeholder="1235" maxlength="4" pattern="\d{4}">
+                        </div>
+                        <div class="input-group">
+                            <label>Northing</label>
+                            <input type="text" id="northingB" class="coord-input" placeholder="5679" maxlength="4" pattern="\d{4}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" id="calculateBtn">Calculate</button>
+
+            <div class="result-display" id="resultDisplay" style="display: none;">
+                <div class="result-grid">
+                    <div class="result-item">
+                        <h4>Distance</h4>
+                        <div class="result-value" id="distanceValue">--</div>
+                    </div>
+                    <div class="result-item">
+                        <h4>Gisement / Bearing</h4>
+                        <div class="result-value">
+                            <div class="bearing-full" id="bearingValue">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>History (Last 5 calculations)</h3>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">No calculations yet</div>
+            </div>
+            <button class="clear-history" id="clearHistory" style="display: none;">Clear History</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const zoneA = document.getElementById('zoneA');
+        const squareA = document.getElementById('squareA');
+        const eastingA = document.getElementById('eastingA');
+        const northingA = document.getElementById('northingA');
+        const zoneB = document.getElementById('zoneB');
+        const squareB = document.getElementById('squareB');
+        const eastingB = document.getElementById('eastingB');
+        const northingB = document.getElementById('northingB');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const distanceValue = document.getElementById('distanceValue');
+        const bearingValue = document.getElementById('bearingValue');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Direction arrows and labels
+        const directions = [
+            { label: 'N', arrow: '↑', min: 0, max: 22.5 },
+            { label: 'NE', arrow: '↗', min: 22.5, max: 67.5 },
+            { label: 'E', arrow: '→', min: 67.5, max: 112.5 },
+            { label: 'SE', arrow: '↘', min: 112.5, max: 157.5 },
+            { label: 'S', arrow: '↓', min: 157.5, max: 202.5 },
+            { label: 'SW', arrow: '↙', min: 202.5, max: 247.5 },
+            { label: 'W', arrow: '←', min: 247.5, max: 292.5 },
+            { label: 'NW', arrow: '↖', min: 292.5, max: 337.5 },
+            { label: 'N', arrow: '↑', min: 337.5, max: 360 }
+        ];
+
+        // Initialize
+        function init() {
+            loadTheme();
+            loadHistory();
+            setupEventListeners();
+        }
+
+        // Theme toggle
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        // Calculate distance and bearing
+        function calculate() {
+            // Get values
+            const zA = zoneA.value.toUpperCase();
+            const sA = squareA.value.toUpperCase();
+            const eA = parseInt(eastingA.value) || 0;
+            const nA = parseInt(northingA.value) || 0;
+            const zB = zoneB.value.toUpperCase();
+            const sB = squareB.value.toUpperCase();
+            const eB = parseInt(eastingB.value) || 0;
+            const nB = parseInt(northingB.value) || 0;
+
+            // Validation
+            if (!zA || !sA || !eA || !nA || !zB || !sB || !eB || !nB) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Check if same zone and square
+            if (zA !== zB || sA !== sB) {
+                alert('Points must be in the same zone and square');
+                return;
+            }
+
+            // Convert to meters (4 digits = 10m resolution, add implied 0)
+            const eastA = eA * 10;
+            const northA = nA * 10;
+            const eastB = eB * 10;
+            const northB = nB * 10;
+
+            // Calculate distance
+            const dEasting = eastB - eastA;
+            const dNorthing = northB - northA;
+            const distance = Math.round(Math.sqrt(dEasting * dEasting + dNorthing * dNorthing));
+
+            // Calculate bearing in radians
+            const bearingRad = Math.atan2(dEasting, dNorthing);
+            
+            // Convert to degrees (0-360, clockwise from North)
+            let bearingDeg = (bearingRad * 180 / Math.PI);
+            if (bearingDeg < 0) bearingDeg += 360;
+
+            // Convert to mils (0-6400, clockwise from North)
+            const bearingMils = Math.round(bearingDeg * 6400 / 360);
+
+            // Get direction
+            const direction = directions.find(d => bearingDeg >= d.min && bearingDeg < d.max) || directions[0];
+
+            // Display results
+            distanceValue.textContent = distance + ' m';
+            bearingValue.innerHTML = `${bearingMils} mils (${bearingDeg.toFixed(1)}°) <span class="direction-arrow">${direction.arrow}</span> ${direction.label}`;
+            resultDisplay.style.display = 'block';
+
+            // Save to history
+            saveToHistory({
+                coordA: `${zA} ${sA} ${eA} ${nA}`,
+                coordB: `${zB} ${sB} ${eB} ${nB}`,
+                distance: distance,
+                bearing: bearingMils,
+                bearingDeg: bearingDeg.toFixed(1),
+                direction: direction
+            });
+        }
+
+        // Save calculation to history
+        function saveToHistory(calculation) {
+            let history = JSON.parse(localStorage.getItem('mgrsHistory') || '[]');
+            history.unshift(calculation);
+            if (history.length > 5) history = history.slice(0, 5);
+            localStorage.setItem('mgrsHistory', JSON.stringify(history));
+            displayHistory();
+        }
+
+        // Load and display history
+        function loadHistory() {
+            displayHistory();
+        }
+
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('mgrsHistory') || '[]');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">No calculations yet</div>';
+                clearHistoryBtn.style.display = 'none';
+                return;
+            }
+
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <div class="history-coords">${item.coordA} → ${item.coordB}</div>
+                    <div class="history-result">${item.distance}m</div>
+                    <div class="history-bearing">${item.bearing} mils ${item.direction.arrow}</div>
+                </div>
+            `).join('');
+
+            clearHistoryBtn.style.display = 'block';
+        }
+
+        // Clear history
+        function clearHistory() {
+            localStorage.removeItem('mgrsHistory');
+            displayHistory();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            calculateBtn.addEventListener('click', calculate);
+            clearHistoryBtn.addEventListener('click', clearHistory);
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Allow Enter key to calculate
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') calculate();
+                });
+            });
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
