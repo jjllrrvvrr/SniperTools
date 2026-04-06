@@ -629,12 +629,12 @@
                 for (let i = 0; i < 10; i++) {
                     const input = document.getElementById(`distance-${i}`);
                     const row = input.closest('.table-row');
-                    const minCell = document.getElementById(`min-${index}`);
-                    const maxCell = document.getElementById(`max-${index}`);
+                    const minCell = document.getElementById(`min-${i}`);
+                    const maxCell = document.getElementById(`max-${i}`);
                     
                     input.value = '';
-                    document.getElementById(`min-${i}`).textContent = '';
-                    document.getElementById(`max-${i}`).textContent = '';
+                    minCell.textContent = '';
+                    maxCell.textContent = '';
                     row.classList.remove('alert');
                 }
                 localStorage.removeItem('sniperData');
