@@ -1,148 +1,168 @@
 # Sniper Tools
 
-A collection of professional web-based calculators for sniper training and precision shooting.
+Professional web-based calculators for precision shooting and sniper operations.
 
-## 🎯 Overview
+🔗 **Live Demo:** [https://jjllrrvvrr.github.io/SniperTools/](https://jjllrrvvrr.github.io/SniperTools/)
 
-Sniper Tools provides specialized calculators designed for:
-- **Sniper training exercises** - Distance estimation practice
-- **Precision shooting** - Quick calculations in the field
-- **Instructor tools** - Configurable parameters for training scenarios
+---
 
-## 🛠️ Tools Included
+## Overview
 
-### 1. Judging Distance Calculator (`jd.html`)
-A training aid for distance estimation exercises.
+Sniper Tools is a collection of specialized calculators designed for snipers, precision shooters, and tactical instructors. Built with a clean monochrome interface and responsive design, these tools work seamlessly across desktop and mobile devices, even offline.
 
-**How it works:**
-- Instructor enters the actual target distance
-- The calculator displays the acceptable Min/Max range based on configurable percentage margins
-- Trainee's estimate is valid if it falls within this range
+All calculators feature:
+- **Dark/Light mode** toggle with persistent preference
+- **Responsive design** optimized for field use
+- **Offline capability** - works without internet
+- **No tracking or data collection** - everything stays local
 
-**Features:**
-- **10 configurable targets** - Manage multiple training scenarios
-- **Real-time calculation** - Instant Min/Max range display
-- **Customizable ranges** - Configure your own distance thresholds and percentages
-- **Visual alerts** - Warning for distances >1000m
+---
 
-### 2. Mil-Dot Master (`mildotmaster.html`)
-An interactive slide rule for calculating distances using mil-dot reticle measurements.
+## Tools
 
-**How it works:**
-- Select target type (standing man, crouched, head/shoulders, etc.)
-- Enter mils observed through scope
-- Get instant distance calculation
-- Or use the interactive slide rule by dragging
+### 1. Loophole Calculator
+
+Calculate bullet trajectory through obstacles to determine safe firing solutions.
+
+**Purpose:** Determine if you can shoot through a small opening (loophole) without hitting the obstacle, based on your rifle's height-over-bore and dialed elevation.
 
 **Features:**
-- **8 reference targets** - From helmet (25cm) to vehicle (400cm)
-- **Interactive slide rule** - Drag to align values
-- **Dual input** - Slider or numeric entry
-- **Real-time calculation** - Formula displayed: `(Size × 10) ÷ Mils = Distance`
+- Rifle presets (AX338, SCAR-HPR, Barret .50)
+- Visual sight picture with crosshair overlay
+- GO/NO-GO decision indicator
+- Aim point recommendation (top/bottom third)
+- Real-time bullet path calculation
 
-## ✨ Common Features
+**Formula:** `Bullet Path = -(HOB × 10 / Distance) + Dialed Elevation`
 
-### Design
-- **Clean monochrome design** - Black, white, and gray color scheme
-- **Large logo** - Prominent branding (120px on desktop)
-- **Responsive layout** - Works on desktop, tablet, and mobile
-- **Consistent navigation** - Click logo to return to home
+---
 
-### Theme Support
-- **Dark/Light mode** - Toggle with animated sun/moon icons
-- **Synchronized** - Theme preference shared across all tools via LocalStorage
-- **Persistent** - Your preference is saved automatically
+### 2. Range Finder
 
-### Technical
-- **No dependencies** - Vanilla HTML, CSS, JavaScript
-- **Offline capable** - Works without internet after first load
-- **Local storage** - Saves your data and preferences
-- **Common stylesheet** - Consistent styling across tools (`styles.css`)
+Estimate target distance using mil-dot reticle measurements.
 
-## 🚀 Usage
+**Purpose:** Calculate distance to target based on its known size and angular measurement in mils.
 
-### Getting Started
-1. Open `index.html` to view available tools
-2. Click on a tool card to launch it
-3. Click the Sniper Tools logo to return home
+**Features:**
+- 8 preset target types (180cm standing man to 400cm vehicle)
+- Custom size input
+- Interactive slider (0.1 - 10 mils)
+- Real-time distance calculation
+- Formula display
 
-### Judging Distance Calculator
-1. Configure distance ranges via the ⚙️ gear icon (optional)
-2. Enter actual distances for each target
-3. Read the Min/Max columns for acceptable estimation ranges
+**Formula:** `(Size in meters / Mils) × 1000 = Distance in meters`
 
-### Mil-Dot Master
-1. Select target type from dropdown
-2. Enter mils observed (use slider or type value)
-3. Read calculated distance
-4. Or drag the slide rule to visually align values
+---
 
-## 🛠️ Technical Details
+### 3. MGRS Calculator
 
-### Technologies
-- **HTML5** - Semantic markup
-- **CSS3** - Custom properties (CSS variables), Grid, Flexbox
-- **JavaScript** - Vanilla JS, no frameworks
-- **LocalStorage API** - Data persistence across sessions
+Calculate distance and bearing between two MGRS coordinates.
 
-### File Structure
+**Purpose:** Grid navigation and target location using Military Grid Reference System coordinates.
+
+**Features:**
+- Distance calculation in meters
+- Bearing in mils (0-6400) and degrees (0-360°)
+- Direction indicator with cardinal points
+- Calculation history (last 5)
+- Works within same UTM zone/square
+
+---
+
+### 4. Judging Distance Skills
+
+Training tool for distance estimation exercises.
+
+**Purpose:** Practice and validate distance estimation with configurable acceptance margins.
+
+**Features:**
+- 10 independent targets
+- Configurable distance ranges with percentage margins
+- Min/Max acceptable values calculated automatically
+- Visual alert for distances >1000m
+- Local storage for training session continuity
+
+**Default Ranges:**
+- 0-300m: ±15%
+- 301-600m: ±10%
+- 601-1000m: ±5%
+- >1000m: Alert + 5%
+
+---
+
+## Design
+
+**Visual Identity:**
+- Monochrome color scheme (no blue)
+- Clean, minimalist interface
+- High contrast for outdoor visibility
+- Consistent header with logo navigation
+
+**Technical:**
+- Pure HTML/CSS/JavaScript - no frameworks
+- CSS custom properties for theming
+- LocalStorage for persistence
+- Mobile-first responsive design
+
+---
+
+## Usage
+
+### Desktop
+1. Open `index.html` or visit the live demo
+2. Select a tool from the grid
+3. Click the logo to return home
+
+### Mobile
+- Add to home screen for quick access
+- Works offline after first load
+- Touch-optimized controls
+
+---
+
+## File Structure
+
 ```
 SniperTools/
-├── index.html              # Landing page with tool selection
-├── jd.html                 # Judging Distance Calculator
-├── mildotmaster.html       # Mil-Dot Master
+├── index.html              # Landing page
+├── loophole.html           # Loophole Calculator
+├── rangefinder.html        # Range Finder (mil-dot)
+├── mgrscalculator.html     # MGRS Calculator
+├── jd.html                 # Judging Distance Skills
 ├── styles.css              # Common stylesheet
 ├── logo.png                # Application logo
 └── README.md               # This file
 ```
 
-### Browser Compatibility
+---
+
+## Browser Support
+
 - Chrome/Edge (latest)
 - Firefox (latest)
 - Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## 💾 Data Storage
-
-The application uses browser LocalStorage to save:
-- **Theme preference** - Light or dark mode (shared across tools)
-- **JD Calculator** - Custom ranges and target values
-- **Mil-Dot Master** - Last used settings
-
-**Note:** All data is stored locally in your browser. Nothing is transmitted to any server.
-
-## 🔒 Privacy
-
-This application:
-- ✅ Stores data only in your browser's LocalStorage
-- ✅ Works completely offline
-- ✅ Does not transmit any data to servers
-- ✅ Does not use cookies or tracking
-
-## 🎨 Customization
-
-### Modifying Default Values
-Edit the source files to customize:
-- Distance ranges in `jd.html`
-- Target sizes in `mildotmaster.html`
-- Colors in `styles.css`
-
-## 📝 License
-
-This project is open source. Feel free to use, modify, and distribute.
-
-## 👤 Author
-
-Created by [jjllrrvvrr](https://github.com/jjllrrvvrr)
-
-## 🤝 Contributing
-
-Suggestions and improvements are welcome! Feel free to:
-- Fork the repository
-- Submit pull requests
-- Report issues
-- Suggest new features or tools
+- Mobile Safari & Chrome
 
 ---
 
-**Live Demo:** https://jjllrrvvrr.github.io/SniperTools/
+## Data & Privacy
+
+All data is stored locally in your browser:
+- Theme preference (`sniperTheme`)
+- Range Finder settings
+- MGRS calculation history
+- JD custom ranges and values
+
+**No data is transmitted to any server.**
+
+---
+
+## Author
+
+Created by [@jjllrrvvrr](https://github.com/jjllrrvvrr)
+
+---
+
+## License
+
+Open source. Use, modify, distribute freely.
