@@ -6,27 +6,12 @@
     <title>Sniper Tools - MGRS Calculator</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Specific styles for MGRS Calculator */
-        .calculator-container {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        .points-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 25px;
-        }
-
+        /* MGRS Calculator specific styles */
         .point-card {
             background-color: var(--bg-color);
-            padding: 20px;
-            border-radius: 8px;
             border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
         }
 
         .point-card h3 {
@@ -45,115 +30,13 @@
             align-items: end;
         }
 
-        .zone-input {
-            width: 100%;
-        }
-
-        .square-input {
-            width: 100%;
-        }
-
         .coord-input {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .input-group label {
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .input-group input, .input-group select {
-            padding: 8px 5px;
-            border: 2px solid var(--input-border);
-            border-radius: 6px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            font-size: 0.95rem;
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            transition: border-color 0.3s ease;
-            width: 100%;
-            min-width: 0;
-        }
-
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .zone-input {
-            text-transform: uppercase;
-        }
-
-        .square-input {
-            text-transform: uppercase;
-        }
-
-        .coord-input {
+            font-family: var(--font-mono);
             letter-spacing: 2px;
         }
 
-        .calculate-btn {
-            width: 100%;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+        .zone-input, .square-input {
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
-        }
-
-        .calculate-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .calculate-btn:active {
-            transform: scale(0.98);
-        }
-
-        .result-display {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .result-item h4 {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
-            margin-bottom: 8px;
-        }
-
-        .result-value {
-            font-size: 2rem;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
         }
 
         .bearing-full {
@@ -166,28 +49,6 @@
             margin-left: 10px;
         }
 
-        .history-section {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-        }
-
-        .history-section h3 {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         .history-item {
             display: grid;
             grid-template-columns: 1fr auto auto;
@@ -197,7 +58,7 @@
             background-color: var(--bg-color);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
         }
 
@@ -214,25 +75,6 @@
             color: var(--text-color);
         }
 
-        .clear-history {
-            margin-top: 15px;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-
-        .clear-history:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
         .empty-history {
             text-align: center;
             color: var(--text-secondary);
@@ -242,27 +84,9 @@
 
         /* Mobile styles */
         @media (max-width: 768px) {
-            .points-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
             .coord-grid {
                 grid-template-columns: 70px 70px 1fr 1fr;
                 gap: 8px;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .result-value {
-                font-size: 1.8rem;
-            }
-
-            .bearing-full {
-                font-size: 1.1rem;
             }
 
             .history-item {
@@ -273,22 +97,9 @@
         }
 
         @media (max-width: 480px) {
-            .point-card {
-                padding: 15px;
-            }
-
             .coord-grid {
                 grid-template-columns: 60px 60px 1fr 1fr;
                 gap: 6px;
-            }
-
-            .input-group input, .input-group select {
-                padding: 8px 5px;
-                font-size: 0.9rem;
-            }
-
-            .result-value {
-                font-size: 1.5rem;
             }
         }
     </style>
@@ -310,77 +121,75 @@
             </div>
         </header>
 
-        <div class="calculator-container">
-            <div class="points-container">
-                <div class="point-card">
-                    <h3>Point A</h3>
+        <div class="card">
+            <div class="grid-2" style="margin-bottom: 25px;">
+                <div class="card-inner">
+                    <h3 class="section-title">Point A</h3>
                     <div class="coord-grid">
                         <div class="input-group">
-                            <label>Zone</label>
-                            <input type="text" id="zoneA" class="zone-input" placeholder="38T" maxlength="3">
+                            <label class="form-label">Zone</label>
+                            <input type="text" id="zoneA" class="form-input mono zone-input" placeholder="38T" maxlength="3">
                         </div>
                         <div class="input-group">
-                            <label>Square</label>
-                            <input type="text" id="squareA" class="square-input" placeholder="MN" maxlength="2">
+                            <label class="form-label">Square</label>
+                            <input type="text" id="squareA" class="form-input mono square-input" placeholder="MN" maxlength="2">
                         </div>
                         <div class="input-group">
-                            <label>Easting</label>
-                            <input type="text" id="eastingA" class="coord-input" placeholder="1234" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Easting</label>
+                            <input type="text" id="eastingA" class="form-input mono coord-input" placeholder="1234" maxlength="4" pattern="\d{4}">
                         </div>
                         <div class="input-group">
-                            <label>Northing</label>
-                            <input type="text" id="northingA" class="coord-input" placeholder="5678" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Northing</label>
+                            <input type="text" id="northingA" class="form-input mono coord-input" placeholder="5678" maxlength="4" pattern="\d{4}">
                         </div>
                     </div>
                 </div>
 
-                <div class="point-card">
-                    <h3>Point B</h3>
+                <div class="card-inner">
+                    <h3 class="section-title">Point B</h3>
                     <div class="coord-grid">
                         <div class="input-group">
-                            <label>Zone</label>
-                            <input type="text" id="zoneB" class="zone-input" placeholder="38T" maxlength="3">
+                            <label class="form-label">Zone</label>
+                            <input type="text" id="zoneB" class="form-input mono zone-input" placeholder="38T" maxlength="3">
                         </div>
                         <div class="input-group">
-                            <label>Square</label>
-                            <input type="text" id="squareB" class="square-input" placeholder="MN" maxlength="2">
+                            <label class="form-label">Square</label>
+                            <input type="text" id="squareB" class="form-input mono square-input" placeholder="MN" maxlength="2">
                         </div>
                         <div class="input-group">
-                            <label>Easting</label>
-                            <input type="text" id="eastingB" class="coord-input" placeholder="1235" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Easting</label>
+                            <input type="text" id="eastingB" class="form-input mono coord-input" placeholder="1235" maxlength="4" pattern="\d{4}">
                         </div>
                         <div class="input-group">
-                            <label>Northing</label>
-                            <input type="text" id="northingB" class="coord-input" placeholder="5679" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Northing</label>
+                            <input type="text" id="northingB" class="form-input mono coord-input" placeholder="5679" maxlength="4" pattern="\d{4}">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="calculate-btn" id="calculateBtn">Calculate</button>
+            <button class="btn" id="calculateBtn" style="width: 100%; margin-bottom: 25px;">Calculate</button>
 
-            <div class="result-display" id="resultDisplay" style="display: none;">
-                <div class="result-grid">
+            <div class="result-box" id="resultDisplay" style="display: none;">
+                <div class="grid-2">
                     <div class="result-item">
-                        <h4>Distance</h4>
+                        <div class="result-label">Distance</div>
                         <div class="result-value" id="distanceValue">--</div>
                     </div>
                     <div class="result-item">
-                        <h4>Gisement / Bearing</h4>
-                        <div class="result-value">
-                            <div class="bearing-full" id="bearingValue">--</div>
-                        </div>
+                        <div class="result-label">Gisement / Bearing</div>
+                        <div class="result-value bearing-full" id="bearingValue">--</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="history-section">
-            <h3>History (Last 5 calculations)</h3>
+        <div class="card">
+            <h3 class="section-title">History (Last 5 calculations)</h3>
             <div class="history-list" id="historyList">
                 <div class="empty-history">No calculations yet</div>
             </div>
-            <button class="clear-history" id="clearHistory" style="display: none;">Clear History</button>
+            <button class="btn btn-outline btn-small" id="clearHistory" style="display: none; margin-top: 15px;">Clear History</button>
         </div>
     </div>
 

@@ -6,218 +6,266 @@
     <title>Sniper Tools - Range Finder</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Specific styles for Range Finder */
-        .controls {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
+        /* Range Finder specific styles */
+        
+        /* Layout principal */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: end;
         }
-
-        .input-group {
+        
+        /* Section Target Size */
+        .target-section {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
-
-        .input-group label {
+        
+        .target-section label {
             font-size: 0.75rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+            height: 18px;
+            line-height: 18px;
         }
-
-        select, input[type="number"] {
-            padding: 12px 15px;
+        
+        .target-section select {
+            width: 100%;
+            height: 50px;
+            padding: 0 16px;
             border: 2px solid var(--input-border);
-            border-radius: 6px;
+            border-radius: 8px;
             background-color: var(--input-bg);
             color: var(--text-color);
-            font-size: 1rem;
-            min-width: 180px;
+            font-size: 0.95rem;
+            cursor: pointer;
             transition: border-color 0.3s ease;
         }
-
-        select:focus, input[type="number"]:focus {
+        
+        .target-section select:focus {
             outline: none;
             border-color: var(--accent-color);
         }
-
-        input[type="number"] {
-            text-align: center;
-            font-weight: 700;
-        }
-
+        
         .custom-size {
             display: none;
+            width: 100%;
+            height: 50px;
+            padding: 0 16px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: var(--font-mono);
+            text-align: center;
+            transition: border-color 0.3s ease;
             margin-top: 10px;
         }
-
+        
         .custom-size.visible {
             display: block;
         }
-
-        .mils-group {
-            flex: 1;
-            min-width: 280px;
-            width: 100%;
+        
+        .custom-size:focus {
+            outline: none;
+            border-color: var(--accent-color);
         }
-
-        .mils-input-container {
+        
+        /* Section Mils */
+        .mils-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .mils-section label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            height: 18px;
+            line-height: 18px;
+        }
+        
+        .mils-input-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
-            width: 100%;
+            gap: 20px;
+            height: 50px;
         }
-
+        
         .slider-container {
             flex: 1;
-            width: 100%;
-            min-width: 0;
+            position: relative;
         }
-
+        
         input[type="range"] {
             width: 100%;
-            height: 10px;
+            height: 8px;
             -webkit-appearance: none;
             background: var(--border-color);
-            border-radius: 5px;
+            border-radius: 4px;
             outline: none;
             cursor: pointer;
         }
-
+        
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             background: var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid var(--card-bg);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--card-bg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s ease;
         }
-
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
         input[type="range"]::-moz-range-thumb {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             background: var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid var(--card-bg);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--card-bg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
-
+        
         .mils-number {
-            width: 80px !important;
-            min-width: 80px !important;
-        }
-
-        .result-display {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .result-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-        }
-
-        .result-unit {
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-
-        .formula {
-            background-color: var(--card-bg);
-            padding: 20px;
+            width: 90px;
+            height: 50px;
+            padding: 0 12px;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
             text-align: center;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease;
         }
-
-        .formula strong {
+        
+        .mils-number:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        /* Result section */
+        .result-section {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
+            color: var(--bg-color);
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .result-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            line-height: 1;
+        }
+        
+        .result-unit {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            margin-left: 8px;
+        }
+        
+        /* Formula section */
+        .formula-section {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .formula-text {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        .formula-text strong {
             color: var(--text-color);
         }
-
-        /* Mobile styles */
+        
+        .formula-values {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .controls {
+            .controls-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .result-value {
+                font-size: 2.5rem;
+            }
+            
+            .result-unit {
+                font-size: 1.2rem;
+            }
+            
+            .mils-input-wrapper {
                 flex-direction: column;
-                gap: 20px;
-                padding: 20px;
+                gap: 15px;
+                height: auto;
             }
-
-            select, input[type="number"] {
-                min-width: 100%;
-                width: 100%;
-            }
-
-            .mils-input-container {
-                flex-direction: column-reverse;
-                width: 100%;
-                gap: 10px;
-            }
-
+            
             .slider-container {
                 width: 100%;
-                min-width: auto;
             }
-
-            .result-display {
-                padding: 20px;
+            
+            .mils-number {
+                width: 100%;
+                height: 50px;
             }
-
+        }
+        
+        @media (max-width: 480px) {
             .result-value {
                 font-size: 2rem;
             }
-
-            .formula {
-                font-size: 0.8rem;
-                padding: 15px;
+            
+            .target-section select,
+            .custom-size,
+            .mils-number {
+                padding: 12px 14px;
+                font-size: 0.9rem;
             }
         }
-
-        @media (max-width: 480px) {
-            .result-value {
-                font-size: 1.8rem;
-            }
-
-            .controls {
-                padding: 15px;
-                gap: 15px;
-            }
-
-            .input-group label {
-                font-size: 0.7rem;
-            }
-
-            select, input[type="number"] {
-                padding: 10px 12px;
-                font-size: 0.95rem;
-            }
-        }
-
+        
         @media (hover: none) and (pointer: coarse) {
             input[type="range"]::-webkit-slider-thumb {
                 width: 32px;
                 height: 32px;
             }
-
+            
             input[type="range"]::-moz-range-thumb {
                 width: 32px;
                 height: 32px;
@@ -242,43 +290,47 @@
             </div>
         </header>
 
-        <div class="controls">
-            <div class="input-group">
-                <label for="targetSize">Target Size</label>
-                <select id="targetSize">
-                    <option value="180" selected>Standing man (180 cm)</option>
-                    <option value="120">Crouched man (120 cm)</option>
-                    <option value="90">Backpack (90 cm)</option>
-                    <option value="50">Head/shoulders (50 cm)</option>
-                    <option value="30">Head only (30 cm)</option>
-                    <option value="25">Helmet (25 cm)</option>
-                    <option value="150">Tire diameter (150 cm)</option>
-                    <option value="400">Vehicle width (400 cm)</option>
-                    <option value="custom">Custom size...</option>
-                </select>
-                <input type="number" id="customSize" class="custom-size" placeholder="Enter custom size in cm" min="1" max="500">
-            </div>
+        <div class="card">
+            <div class="controls-grid">
+                <div class="target-section">
+                    <label for="targetSize">Target Size</label>
+                    <select id="targetSize">
+                        <option value="180" selected>Standing man (180 cm)</option>
+                        <option value="120">Crouched man (120 cm)</option>
+                        <option value="90">Backpack (90 cm)</option>
+                        <option value="50">Head/shoulders (50 cm)</option>
+                        <option value="30">Head only (30 cm)</option>
+                        <option value="25">Helmet (25 cm)</option>
+                        <option value="150">Tire diameter (150 cm)</option>
+                        <option value="400">Vehicle width (400 cm)</option>
+                        <option value="custom">Custom size...</option>
+                    </select>
+                    <input type="number" id="customSize" class="custom-size" placeholder="Enter size in cm" min="1" max="500">
+                </div>
 
-            <div class="input-group mils-group">
-                <label for="milsInput">Mils Observed</label>
-                <div class="mils-input-container">
-                    <div class="slider-container">
-                        <input type="range" id="milsSlider" min="0.1" max="10" step="0.1" value="2.5" aria-label="Mils slider">
+                <div class="mils-section">
+                    <label for="milsInput">Mils Observed</label>
+                    <div class="mils-input-wrapper">
+                        <div class="slider-container">
+                            <input type="range" id="milsSlider" min="0.1" max="10" step="0.1" value="2.5" aria-label="Mils slider">
+                        </div>
+                        <input type="number" id="milsInput" class="mils-number" min="0.1" max="10" step="0.1" value="2.5" aria-label="Mils value">
                     </div>
-                    <input type="number" id="milsInput" class="mils-number" min="0.1" max="10" step="0.1" value="2.5" placeholder="2.5" aria-label="Mils value">
                 </div>
             </div>
         </div>
 
-        <div class="result-display">
+        <div class="result-section">
+            <div class="result-label">Distance</div>
             <div class="result-value">
-                <span id="finalResult">720</span>
-                <span class="result-unit">m</span>
+                <span id="finalResult">720</span><span class="result-unit">m</span>
             </div>
         </div>
 
-        <div class="formula">
-            <strong>Formula:</strong> (<span id="sizeDisplay">1.8</span> m / <span id="milsDisplay">2.5</span> mils) × 1000 = <strong><span id="calcResult">720</span> m</strong>
+        <div class="formula-section">
+            <div class="formula-text">
+                <strong>Formula:</strong> (<span class="formula-values" id="sizeDisplay">1.8</span> m / <span class="formula-values" id="milsDisplay">2.5</span> mils) × 1000 = <strong><span class="formula-values" id="calcResult">720</span> m</strong>
+            </div>
         </div>
     </div>
 
@@ -341,12 +393,10 @@
         }
 
         // Calculate distance
-        // Formula: (size in meters / mils) * 1000 = distance in meters
-        // Example: 1.8m / 2 mils = 0.9km = 900m
         function calculateDistance(sizeCm, mils) {
-            const sizeM = sizeCm / 100; // Convert cm to meters
-            const distanceKm = sizeM / mils; // Distance in km
-            return Math.round(distanceKm * 1000); // Convert to meters
+            const sizeM = sizeCm / 100;
+            const distanceKm = sizeM / mils;
+            return Math.round(distanceKm * 1000);
         }
 
         // Update all displays
