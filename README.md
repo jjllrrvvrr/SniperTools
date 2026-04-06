@@ -1,67 +1,100 @@
-# JD Calculator - Sniper Judging Distance Calculator
+# Sniper Tools
 
-A web-based calculator for sniper training exercises, designed to help instructors evaluate distance estimation skills.
+A collection of professional web-based calculators for sniper training and precision shooting.
 
-## 🎯 Purpose
+## 🎯 Overview
 
-In sniper training, targets are placed at various distances. Trainees must estimate these distances by eye. This calculator determines the acceptable estimation range (Min/Max values) based on the actual distance, using configurable percentage margins.
+Sniper Tools provides specialized calculators designed for:
+- **Sniper training exercises** - Distance estimation practice
+- **Precision shooting** - Quick calculations in the field
+- **Instructor tools** - Configurable parameters for training scenarios
+
+## 🛠️ Tools Included
+
+### 1. Judging Distance Calculator (`jd.html`)
+A training aid for distance estimation exercises.
 
 **How it works:**
 - Instructor enters the actual target distance
-- The calculator displays the acceptable Min/Max range
+- The calculator displays the acceptable Min/Max range based on configurable percentage margins
 - Trainee's estimate is valid if it falls within this range
 
-## ✨ Features
-
-### Core Functionality
+**Features:**
 - **10 configurable targets** - Manage multiple training scenarios
 - **Real-time calculation** - Instant Min/Max range display
-- **Dark/Light mode** - Toggle between themes with animated sun/moon icons
-- **Local storage** - Saves your data between sessions
-- **Responsive design** - Works on desktop, tablet, and mobile
+- **Customizable ranges** - Configure your own distance thresholds and percentages
+- **Visual alerts** - Warning for distances >1000m
 
-### Customizable Calculation Ranges
-- **Configure distance ranges** - Click the ⚙️ gear icon in the "Calculation rules" section
-- **Dynamic ranges** - Add or remove ranges (2-10 ranges supported)
-- **Automatic continuity** - Ranges automatically adjust to prevent gaps or overlaps
-- **Default values:**
-  - 0-300m: ±15%
-  - 301-600m: ±10%
-  - 601-1000m: ±5%
-  - >1000m: Alert + 5%
+### 2. Mil-Dot Master (`mildotmaster.html`)
+An interactive slide rule for calculating distances using mil-dot reticle measurements.
 
-### User Interface
+**How it works:**
+- Select target type (standing man, crouched, head/shoulders, etc.)
+- Enter mils observed through scope
+- Get instant distance calculation
+- Or use the interactive slide rule by dragging
+
+**Features:**
+- **8 reference targets** - From helmet (25cm) to vehicle (400cm)
+- **Interactive slide rule** - Drag to align values
+- **Dual input** - Slider or numeric entry
+- **Real-time calculation** - Formula displayed: `(Size × 10) ÷ Mils = Distance`
+
+## ✨ Common Features
+
+### Design
 - **Clean monochrome design** - Black, white, and gray color scheme
-- **Tabular layout** - Clear Target/Distance/Min/Max presentation
-- **Visual alerts** - Orange border warning for distances >1000m
-- **Centered inputs** - Easy-to-read distance entry
-- **GitHub integration** - Link to creator's profile
+- **Large logo** - Prominent branding (120px on desktop)
+- **Responsive layout** - Works on desktop, tablet, and mobile
+- **Consistent navigation** - Click logo to return to home
+
+### Theme Support
+- **Dark/Light mode** - Toggle with animated sun/moon icons
+- **Synchronized** - Theme preference shared across all tools via LocalStorage
+- **Persistent** - Your preference is saved automatically
+
+### Technical
+- **No dependencies** - Vanilla HTML, CSS, JavaScript
+- **Offline capable** - Works without internet after first load
+- **Local storage** - Saves your data and preferences
+- **Common stylesheet** - Consistent styling across tools (`styles.css`)
 
 ## 🚀 Usage
 
-### Basic Usage
-1. Open `index.html` in any modern web browser
-2. Enter the actual distance for each target in meters
-3. The Min and Max columns automatically display the acceptable estimation range
-4. Trainees should estimate within this range to pass
+### Getting Started
+1. Open `index.html` to view available tools
+2. Click on a tool card to launch it
+3. Click the Sniper Tools logo to return home
 
-### Customizing Ranges
-1. Click the ⚙️ gear icon next to "Calculation rules"
-2. Modify distance thresholds and percentage values
-3. Click "Add range" to create additional ranges (up to 10)
-4. Click "Reset to default values" to restore original settings
+### Judging Distance Calculator
+1. Configure distance ranges via the ⚙️ gear icon (optional)
+2. Enter actual distances for each target
+3. Read the Min/Max columns for acceptable estimation ranges
 
-### Theme Toggle
-- Click the sun/moon toggle in the header to switch between light and dark modes
-- Your preference is saved automatically
+### Mil-Dot Master
+1. Select target type from dropdown
+2. Enter mils observed (use slider or type value)
+3. Read calculated distance
+4. Or drag the slide rule to visually align values
 
 ## 🛠️ Technical Details
 
 ### Technologies
 - **HTML5** - Semantic markup
-- **CSS3** - Custom properties (variables), Grid, Flexbox, transitions
-- **JavaScript** - Vanilla JS, no dependencies
-- **LocalStorage API** - Data persistence
+- **CSS3** - Custom properties (CSS variables), Grid, Flexbox
+- **JavaScript** - Vanilla JS, no frameworks
+- **LocalStorage API** - Data persistence across sessions
+
+### File Structure
+```
+SniperTools/
+├── index.html              # Landing page with tool selection
+├── jd.html                 # Judging Distance Calculator
+├── mildotmaster.html       # Mil-Dot Master
+├── styles.css              # Common stylesheet
+├── logo.png                # Application logo
+└── README.md               # This file
+```
 
 ### Browser Compatibility
 - Chrome/Edge (latest)
@@ -69,46 +102,14 @@ In sniper training, targets are placed at various distances. Trainees must estim
 - Safari (latest)
 - Mobile browsers (iOS Safari, Chrome Mobile)
 
-### File Structure
-```
-JD/
-├── index.html          # Main application
-├── logo.png            # Application logo
-└── README.md           # This file
-```
-
 ## 💾 Data Storage
 
 The application uses browser LocalStorage to save:
-- **Target distances** - All 10 target values
-- **Theme preference** - Light or dark mode
-- **Custom ranges** - Your configured calculation ranges
+- **Theme preference** - Light or dark mode (shared across tools)
+- **JD Calculator** - Custom ranges and target values
+- **Mil-Dot Master** - Last used settings
 
-**Note:** Data is stored locally in your browser and is not transmitted to any server.
-
-## 🎨 Customization
-
-### Changing Default Ranges
-Edit the `defaultRanges` array in the JavaScript section:
-
-```javascript
-const defaultRanges = [
-  { min: 0, max: 300, percent: 15 },
-  { min: 301, max: 600, percent: 10 },
-  { min: 601, max: 1000, percent: 5 },
-  { min: 1001, max: null, percent: 5 }  // null = Infinity
-];
-```
-
-### Color Scheme
-The monochrome theme uses CSS custom properties. Edit the `:root` section to adjust colors.
-
-## 📱 Mobile Support
-
-The calculator is fully responsive:
-- **Desktop:** Full table view with all columns
-- **Tablet:** Optimized spacing
-- **Mobile:** Stacked layout with labeled Min/Max cells
+**Note:** All data is stored locally in your browser. Nothing is transmitted to any server.
 
 ## 🔒 Privacy
 
@@ -117,6 +118,14 @@ This application:
 - ✅ Works completely offline
 - ✅ Does not transmit any data to servers
 - ✅ Does not use cookies or tracking
+
+## 🎨 Customization
+
+### Modifying Default Values
+Edit the source files to customize:
+- Distance ranges in `jd.html`
+- Target sizes in `mildotmaster.html`
+- Colors in `styles.css`
 
 ## 📝 License
 
@@ -132,7 +141,7 @@ Suggestions and improvements are welcome! Feel free to:
 - Fork the repository
 - Submit pull requests
 - Report issues
-- Suggest new features
+- Suggest new features or tools
 
 ---
 

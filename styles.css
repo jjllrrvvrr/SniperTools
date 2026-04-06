@@ -61,14 +61,20 @@ header {
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
-    flex-wrap: wrap;
     gap: 15px;
+    flex-wrap: nowrap;
 }
 
 .logo-title {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.logo-title > div {
+    min-width: 0;
 }
 
 .logo-title a {
@@ -79,8 +85,8 @@ header {
 .logo {
     width: auto;
     height: auto;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 120px;
+    max-height: 120px;
     object-fit: contain;
     transform: scale(1);
     transform-origin: left center;
@@ -92,18 +98,24 @@ header {
 }
 
 h1 {
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .subtitle {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Theme toggle */
@@ -111,6 +123,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .toggle-btn {
@@ -222,19 +235,27 @@ select:focus, input[type="number"]:focus {
     border-color: var(--accent-color);
 }
 
-/* Responsive */
+/* Responsive - keep header on same line */
 @media (max-width: 768px) {
     header {
-        flex-direction: column;
-        align-items: stretch;
+        gap: 10px;
     }
 
     .logo-title {
-        justify-content: center;
+        gap: 10px;
     }
 
-    .theme-toggle {
-        align-self: center;
+    .logo {
+        max-width: 90px;
+        max-height: 90px;
+    }
+
+    h1 {
+        font-size: clamp(0.9rem, 2vw, 1.5rem);
+    }
+
+    .subtitle {
+        font-size: 0.6rem;
     }
 }
 
@@ -243,11 +264,39 @@ select:focus, input[type="number"]:focus {
         padding: 15px;
     }
 
-    .logo {
-        transform: scale(1);
+    header {
+        gap: 8px;
     }
 
     .logo-title {
-        gap: 10px;
+        gap: 8px;
+    }
+
+    .logo {
+        max-width: 70px;
+        max-height: 70px;
+    }
+
+    h1 {
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .subtitle {
+        font-size: 0.55rem;
+    }
+
+    .toggle-btn {
+        width: 50px;
+        height: 24px;
+    }
+
+    .toggle-btn .slider {
+        width: 18px;
+        height: 18px;
+    }
+
+    .toggle-btn[data-active="true"] .slider {
+        transform: translateX(26px);
     }
 }
