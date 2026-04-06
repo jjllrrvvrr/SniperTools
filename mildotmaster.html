@@ -64,161 +64,59 @@
             display: block;
         }
 
-        .slide-rule-container {
-            background-color: var(--cell-bg);
-            border: 3px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px 20px;
-            position: relative;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-            user-select: none;
+        .mils-group {
+            flex: 1;
+            min-width: 280px;
+            width: 100%;
         }
 
-        .scale-label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .scale-label.bottom {
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-
-        .ruler-wrapper {
-            position: relative;
-            height: 120px;
-            background: linear-gradient(to bottom, var(--card-bg) 0%, var(--card-bg) 50%, var(--cell-bg) 50%, var(--cell-bg) 100%);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .scale-fixed {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
+        .mils-input-container {
             display: flex;
-            align-items: flex-start;
-            padding-top: 5px;
-        }
-
-        .scale-sliding {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 50%;
-            width: 200%;
-            display: flex;
-            align-items: flex-end;
-            padding-bottom: 5px;
-            transition: transform 0.1s ease-out;
-            cursor: grab;
-        }
-
-        .scale-sliding:active {
-            cursor: grabbing;
-        }
-
-        .tick {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
             align-items: center;
+            gap: 15px;
+            width: 100%;
         }
 
-        .tick-line {
-            width: 2px;
-            background-color: var(--accent-color);
+        .slider-container {
+            flex: 1;
+            width: 100%;
+            min-width: 0;
         }
 
-        .scale-fixed .tick-line {
-            height: 15px;
-            margin-bottom: 3px;
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
         }
 
-        .scale-sliding .tick-line {
-            height: 15px;
-            margin-bottom: 3px;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .tick-line.major {
-            width: 3px;
-            height: 25px;
+        input[type="range"]::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .tick-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-color);
-            font-family: 'Courier New', monospace;
-        }
-
-        .cursor {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: var(--alert-color);
-            transform: translateX(-50%);
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .cursor::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 12px solid var(--alert-color);
-        }
-
-        .cursor::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-bottom: 12px solid var(--alert-color);
-        }
-
-        .reading-window {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--card-bg);
-            border: 2px solid var(--alert-color);
-            border-radius: 6px;
-            padding: 8px 15px;
-            text-align: center;
-            z-index: 11;
-            box-shadow: var(--shadow);
-        }
-
-        .reading-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--alert-color);
-            font-family: 'Courier New', monospace;
-        }
-
-        .reading-label {
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .mils-number {
+            width: 80px !important;
+            min-width: 80px !important;
         }
 
         .result-display {
@@ -256,58 +154,23 @@
             color: var(--text-color);
         }
 
-        .mils-input-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .slider-container {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: var(--border-color);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
-        .mils-number {
-            width: 80px !important;
-            min-width: 80px !important;
-        }
-
+        /* Mobile styles */
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
                 gap: 20px;
+                padding: 20px;
+            }
+
+            select, input[type="number"] {
+                min-width: 100%;
+                width: 100%;
             }
 
             .mils-input-container {
-                flex-direction: column;
+                flex-direction: column-reverse;
                 width: 100%;
+                gap: 10px;
             }
 
             .slider-container {
@@ -315,8 +178,49 @@
                 min-width: auto;
             }
 
+            .result-display {
+                padding: 20px;
+            }
+
             .result-value {
                 font-size: 2rem;
+            }
+
+            .formula {
+                font-size: 0.8rem;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .result-value {
+                font-size: 1.8rem;
+            }
+
+            .controls {
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .input-group label {
+                font-size: 0.7rem;
+            }
+
+            select, input[type="number"] {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+
+            input[type="range"]::-moz-range-thumb {
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
@@ -352,41 +256,18 @@
                     <option value="400">Vehicle width (400 cm)</option>
                     <option value="custom">Custom size...</option>
                 </select>
-                <input type="number" id="customSize" class="custom-size" placeholder="cm" min="1" max="500">
+                <input type="number" id="customSize" class="custom-size" placeholder="Enter custom size in cm" min="1" max="500">
             </div>
 
-            <div class="input-group">
+            <div class="input-group mils-group">
                 <label for="milsInput">Mils Observed</label>
                 <div class="mils-input-container">
                     <div class="slider-container">
-                        <input type="range" id="milsSlider" min="0.1" max="10" step="0.1" value="2.5">
+                        <input type="range" id="milsSlider" min="0.1" max="10" step="0.1" value="2.5" aria-label="Mils slider">
                     </div>
-                    <input type="number" id="milsInput" class="mils-number" min="0.1" max="10" step="0.1" value="2.5" placeholder="2.5">
+                    <input type="number" id="milsInput" class="mils-number" min="0.1" max="10" step="0.1" value="2.5" placeholder="2.5" aria-label="Mils value">
                 </div>
             </div>
-        </div>
-
-        <div class="slide-rule-container">
-            <div class="scale-label">▼ Drag to align values</div>
-            
-            <div class="ruler-wrapper" id="rulerWrapper">
-                <div class="scale-sliding" id="distanceScale">
-                    <!-- Distance ticks generated by JS -->
-                </div>
-                
-                <div class="cursor">
-                    <div class="reading-window">
-                        <div class="reading-value" id="readingValue">--</div>
-                        <div class="reading-label">meters</div>
-                    </div>
-                </div>
-                
-                <div class="scale-fixed" id="milsScale">
-                    <!-- Mils ticks generated by JS -->
-                </div>
-            </div>
-            
-            <div class="scale-label bottom">▲ Mils Scale (Fixed)</div>
         </div>
 
         <div class="result-display">
@@ -397,7 +278,7 @@
         </div>
 
         <div class="formula">
-            <strong>Formula:</strong> (<span id="sizeDisplay">180</span> cm × 10) ÷ <span id="milsDisplay">2.5</span> mils = <strong><span id="calcResult">720</span> m</strong>
+            <strong>Formula:</strong> (<span id="sizeDisplay">1.8</span> m / <span id="milsDisplay">2.5</span> mils) × 1000 = <strong><span id="calcResult">720</span> m</strong>
         </div>
     </div>
 
@@ -417,19 +298,12 @@
         // Current state
         let currentSize = 180;
         let currentMils = 2.5;
-        let isDragging = false;
-        let startX = 0;
-        let currentOffset = 0;
 
         // DOM elements
         const targetSizeSelect = document.getElementById('targetSize');
         const customSizeInput = document.getElementById('customSize');
         const milsInput = document.getElementById('milsInput');
         const milsSlider = document.getElementById('milsSlider');
-        const distanceScale = document.getElementById('distanceScale');
-        const milsScale = document.getElementById('milsScale');
-        const rulerWrapper = document.getElementById('rulerWrapper');
-        const readingValue = document.getElementById('readingValue');
         const finalResult = document.getElementById('finalResult');
         const sizeDisplay = document.getElementById('sizeDisplay');
         const milsDisplay = document.getElementById('milsDisplay');
@@ -439,7 +313,6 @@
         // Initialize
         function init() {
             loadTheme();
-            generateMilsScale();
             updateCalculation();
             setupEventListeners();
         }
@@ -467,97 +340,24 @@
             }
         }
 
-        // Generate mils scale (fixed, logarithmic)
-        function generateMilsScale() {
-            const milsValues = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 
-                               1, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10];
-            
-            milsScale.innerHTML = '';
-            
-            milsValues.forEach(mil => {
-                const tick = document.createElement('div');
-                tick.className = 'tick';
-                const position = milToPosition(mil);
-                tick.style.left = `${position}%`;
-                
-                const line = document.createElement('div');
-                line.className = 'tick-line';
-                if (mil % 1 === 0 || mil === 0.5) {
-                    line.classList.add('major');
-                }
-                
-                const label = document.createElement('div');
-                label.className = 'tick-label';
-                label.textContent = mil;
-                
-                tick.appendChild(line);
-                tick.appendChild(label);
-                milsScale.appendChild(tick);
-            });
-        }
-
-        // Generate distance scale (sliding, based on target size)
-        function generateDistanceScale(size) {
-            const distances = [];
-            for (let d = 3000; d >= 100; d -= 50) {
-                if (d >= 1000 && d % 250 === 0) distances.push(d);
-                else if (d < 1000 && d % 100 === 0) distances.push(d);
-            }
-            
-            distanceScale.innerHTML = '';
-            
-            distances.forEach(dist => {
-                const tick = document.createElement('div');
-                tick.className = 'tick';
-                const mils = (size * 10) / dist;
-                const position = milToPosition(mils);
-                tick.style.left = `${position}%`;
-                
-                const line = document.createElement('div');
-                line.className = 'tick-line';
-                if (dist % 500 === 0) {
-                    line.classList.add('major');
-                }
-                
-                const label = document.createElement('div');
-                label.className = 'tick-label';
-                label.textContent = dist;
-                
-                tick.appendChild(line);
-                tick.appendChild(label);
-                distanceScale.appendChild(tick);
-            });
-        }
-
-        // Convert mils to position percentage (logarithmic scale)
-        function milToPosition(mil) {
-            const minLog = Math.log10(0.1);
-            const maxLog = Math.log10(10);
-            const milLog = Math.log10(mil);
-            return ((milLog - minLog) / (maxLog - minLog)) * 100;
-        }
-
         // Calculate distance
-        function calculateDistance(size, mils) {
-            return Math.round((size * 10) / mils);
+        // Formula: (size in meters / mils) * 1000 = distance in meters
+        // Example: 1.8m / 2 mils = 0.9km = 900m
+        function calculateDistance(sizeCm, mils) {
+            const sizeM = sizeCm / 100; // Convert cm to meters
+            const distanceKm = sizeM / mils; // Distance in km
+            return Math.round(distanceKm * 1000); // Convert to meters
         }
 
         // Update all displays
         function updateCalculation() {
             const distance = calculateDistance(currentSize, currentMils);
             
-            readingValue.textContent = distance;
             finalResult.textContent = distance;
             
-            sizeDisplay.textContent = currentSize;
+            sizeDisplay.textContent = (currentSize / 100).toFixed(1);
             milsDisplay.textContent = currentMils;
             calcResult.textContent = distance;
-            
-            generateDistanceScale(currentSize);
-            
-            const milsPosition = milToPosition(currentMils);
-            const offset = 50 - milsPosition;
-            distanceScale.style.transform = `translateX(${offset}%)`;
         }
 
         // Event listeners
@@ -597,55 +397,6 @@
             });
 
             themeToggle.addEventListener('click', toggleTheme);
-
-            rulerWrapper.addEventListener('mousedown', startDrag);
-            rulerWrapper.addEventListener('touchstart', startDrag, { passive: false });
-            
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('touchmove', drag, { passive: false });
-            
-            document.addEventListener('mouseup', endDrag);
-            document.addEventListener('touchend', endDrag);
-        }
-
-        // Drag functions
-        function startDrag(e) {
-            isDragging = true;
-            startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            currentOffset = parseFloat(distanceScale.style.transform.replace('translateX(', '').replace('%)', '')) || 0;
-            rulerWrapper.style.cursor = 'grabbing';
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            
-            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const deltaX = clientX - startX;
-            const wrapperWidth = rulerWrapper.offsetWidth;
-            const deltaPercent = (deltaX / wrapperWidth) * 100;
-            
-            const newOffset = currentOffset + deltaPercent;
-            const centerPosition = 50 - newOffset;
-            
-            const minLog = Math.log10(0.1);
-            const maxLog = Math.log10(10);
-            const milLog = (centerPosition / 100) * (maxLog - minLog) + minLog;
-            let newMils = Math.pow(10, milLog);
-            
-            newMils = Math.max(0.1, Math.min(10, newMils));
-            
-            currentMils = Math.round(newMils * 10) / 10;
-            milsInput.value = currentMils;
-            milsSlider.value = currentMils;
-            
-            updateCalculation();
-            startX = clientX;
-        }
-
-        function endDrag() {
-            isDragging = false;
-            rulerWrapper.style.cursor = 'grab';
         }
 
         // Initialize
