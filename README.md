@@ -136,4 +136,4 @@ Suggestions and improvements are welcome! Feel free to:
 
 ---
 
-**Live Demo:** https://jjllrrvvrr.github.io/JD/
+**Live Demo:** https://jjllrrvvrr.github.io/SniperTools/
