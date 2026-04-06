@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -607,7 +607,7 @@
                 <h1>JD CALCULATOR</h1>
             </div>
             <div class="theme-toggle">
-                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Basculer le mode sombre"><span class="slider"></span></button>
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
             </div>
         </header>
 
@@ -630,8 +630,8 @@
 
         <div class="legend">
             <div class="legend-header">
-                <h3>Règles de calcul</h3>
-                <svg class="config-toggle" id="configToggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Configurer les plages de calcul">
+                <h3>Calculation rules</h3>
+                <svg class="config-toggle" id="configToggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Configure calculation ranges">
                     <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.63c-.04.34-.07.67-.07 1 0 .33.03.66.07.97l-2.11 1.63c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z"/>
                 </svg>
             </div>
@@ -650,21 +650,21 @@
                 </div>
                 <div class="legend-item">
                     <div class="legend-dot range3"></div>
-                    <span>> 1000m : ⚠️ Alerte + calcul à 5%</span>
+                    <span>> 1000m : ⚠️ Alert + calculation at 5%</span>
                 </div>
             </div>
             <div class="config-panel" id="configPanel">
-                <div class="config-header">Configuration des plages</div>
+                <div class="config-header">Range configuration</div>
                 <div id="configRows"></div>
                 <div class="config-actions">
-                    <button class="config-add-btn" id="configAddBtn">+ Ajouter une plage</button>
-                    <button class="config-reset-btn" id="configResetBtn">🔄 Réinitialiser valeurs par défaut</button>
+                    <button class="config-add-btn" id="configAddBtn">+ Add range</button>
+                    <button class="config-reset-btn" id="configResetBtn">🔄 Reset to default values</button>
                 </div>
             </div>
         </div>
 
         <div class="github-section">
-            <a href="https://github.com/jjllrrvvrr" target="_blank" rel="noopener noreferrer" aria-label="Voir le profil GitHub">
+            <a href="https://github.com/jjllrrvvrr" target="_blank" rel="noopener noreferrer" aria-label="View GitHub profile">
                 <svg class="github-logo" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.37.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.17 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
                 </svg>
@@ -711,7 +711,7 @@
             row.innerHTML = `
                 <div class="cell-target">Target ${index + 1}</div>
                 <div class="cell-input">
-                    <input type="number" id="distance-${index}" min="0" step="1" placeholder="Entrez la distance">
+                    <input type="number" id="distance-${index}" min="0" step="1" placeholder="Enter distance">
                 </div>
                 <div class="cell-min" id="min-${index}"></div>
                 <div class="cell-max" id="max-${index}"></div>
@@ -726,7 +726,7 @@
             tableBody.appendChild(createRow(i));
         }
 
-        // Configuration des plages de calcul
+        // Range configuration de calcul
         const defaultRanges = [
             { min: 0, max: 300, percent: 15 },
             { min: 301, max: 600, percent: 10 },
@@ -774,7 +774,7 @@
                 } else {
                     label = `${range.min} - ${range.max}m`;
                 }
-                const alertText = range.max === null ? ' ⚠️ Alerte' : '';
+                const alertText = range.max === null ? ' ⚠️ Alert' : '';
                 html += `
                     <div class="legend-item">
                         <div class="legend-dot ${colorClass}"></div>
@@ -890,7 +890,7 @@
         // Bouton Reset
         const resetBtn = document.getElementById('resetBtn');
         resetBtn.addEventListener('click', () => {
-            if (confirm('Voulez-vous vraiment réinitialiser toutes les valeurs ?')) {
+            if (confirm('Do you really want to reset all values?')) {
                 for (let i = 0; i < 10; i++) {
                     const input = document.getElementById(`distance-${i}`);
                     const row = input.closest('.table-row');
@@ -938,7 +938,7 @@
                 const canDelete = currentRanges.length > 2;
 
                 row.innerHTML = `
-                    <span class="config-label">Plage ${index + 1}</span>
+                    <span class="config-label">Range ${index + 1}</span>
                     <input type="number" class="config-input config-min" value="${range.min}" 
                            ${isFirst ? 'disabled' : ''} placeholder="Min">
                     <span>-</span>
@@ -1005,7 +1005,7 @@
                 percent: lastRange.percent
             };
 
-            // Ajouter la nouvelle plage infinie
+            // Add new infinite range
             currentRanges.push({
                 min: newMax + 1,
                 max: null,
@@ -1037,7 +1037,7 @@
         }
 
         function resetConfig() {
-            if (confirm('Voulez-vous vraiment réinitialiser les plages aux valeurs par défaut ?')) {
+            if (confirm('Do you really want to reset ranges to default values?')) {
                 currentRanges = JSON.parse(JSON.stringify(defaultRanges));
                 saveConfig();
                 renderConfigPanel();
