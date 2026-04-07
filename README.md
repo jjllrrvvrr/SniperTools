@@ -61,11 +61,13 @@ Calculate distance and bearing between two MGRS coordinates.
 **Purpose:** Grid navigation and target location using Military Grid Reference System coordinates.
 
 **Features:**
-- Distance calculation in meters
-- Bearing in mils (0-6400) and degrees (0-360°)
-- Direction indicator with cardinal points
+- Distance calculation (meters when <1km, kilometers when ≥1km)
+- Bearing in degrees (0-360°) and mils (0-6400)
+- Direction indicator with cardinal points (↑ ↗ → etc.)
 - Calculation history (last 5)
-- Works within same UTM zone/square
+- Smart grid reference handling: fill Zone/Square for one point, the other inherits it
+- Cross-zone calculations supported
+- Accurate MGRS-to-Lat/Lon conversion using proven algorithms
 
 ---
 
@@ -107,6 +109,20 @@ Training tool for distance estimation exercises.
 - 301-600m: ±10%
 - 601-1000m: ±5%
 - >1000m: Alert + 5%
+
+---
+
+### 6. Useful Links
+
+Collection of reference links for precision shooters.
+
+**Purpose:** Quick access to external resources, manuals, and references.
+
+**Links include:**
+- NATO Ballistic Data (AXMC, SCAR-H, M107A1)
+- Precision shooting resources (6mm BR, Norma, Berger)
+- Tactical guides and manuals
+- Social media: @Belgiansniper Instagram
 
 ---
 

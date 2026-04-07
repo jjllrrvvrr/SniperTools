@@ -6,101 +6,105 @@
     <title>Sniper Tools - MGRS Calculator</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* MGRS Calculator specific styles */
-        .point-card {
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .point-card h3 {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
         .coord-grid {
             display: grid;
             grid-template-columns: 70px 70px 1fr 1fr;
             gap: 8px;
             align-items: end;
         }
-
-        .coord-input {
-            font-family: var(--font-mono);
-            letter-spacing: 2px;
+        .zone-input, .square-input { text-transform: uppercase; }
+        .bearing-full { font-size: 1.3rem; margin-top: 5px; }
+        .direction-arrow { font-size: 1.5rem; margin-left: 10px; }
+        
+        /* History list styling */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-
-        .zone-input, .square-input {
-            text-transform: uppercase;
-        }
-
-        .bearing-full {
-            font-size: 1.3rem;
-            margin-top: 5px;
-        }
-
-        .direction-arrow {
-            font-size: 1.5rem;
-            margin-left: 10px;
-        }
-
         .history-item {
             display: grid;
             grid-template-columns: 1fr auto auto;
             gap: 15px;
             align-items: center;
-            padding: 12px 15px;
+            padding: 14px 18px;
             background-color: var(--bg-color);
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             font-family: var(--font-mono);
             font-size: 0.85rem;
+            transition: border-color 0.2s;
         }
-
-        .history-coords {
-            color: var(--text-secondary);
+        .history-item:hover {
+            border-color: var(--accent-color);
         }
-
-        .history-result {
-            color: var(--accent-color);
-            font-weight: 700;
-        }
-
-        .history-bearing {
-            color: var(--text-color);
-        }
-
+        .history-coords { color: var(--text-secondary); word-break: break-all; }
+        .history-result { color: var(--accent-color); font-weight: 700; white-space: nowrap; }
+        .history-bearing { color: var(--text-color); white-space: nowrap; }
         .empty-history {
             text-align: center;
             color: var(--text-secondary);
             font-style: italic;
+            padding: 25px;
+        }
+        
+        /* Cards spacing */
+        .card + .card {
+            margin-top: 25px;
+        }
+        
+        .calculation-detail {
+            margin-top: 20px;
+            padding: 14px 18px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            padding: 12px 16px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid #e74c3c;
+        }
+        .result-box {
+            margin-top: 20px;
             padding: 20px;
         }
-
-        /* Mobile styles */
-        @media (max-width: 768px) {
-            .coord-grid {
-                grid-template-columns: 70px 70px 1fr 1fr;
-                gap: 8px;
-            }
-
-            .history-item {
-                grid-template-columns: 1fr;
-                gap: 5px;
-                text-align: center;
-            }
+        
+        /* Info box styling */
+        .info-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
-
-        @media (max-width: 480px) {
-            .coord-grid {
-                grid-template-columns: 60px 60px 1fr 1fr;
-                gap: 6px;
+        .info-box strong {
+            color: var(--text-color);
+        }
+        
+        @media (max-width: 768px) {
+            .coord-grid { grid-template-columns: 70px 70px 1fr 1fr; gap: 8px; }
+            .history-item { 
+                grid-template-columns: 1fr; 
+                gap: 8px; 
+                text-align: center;
+                padding: 16px;
             }
+            .history-coords { font-size: 0.8rem; }
+        }
+        @media (max-width: 480px) {
+            .coord-grid { grid-template-columns: 60px 60px 1fr 1fr; gap: 6px; }
         }
     </style>
 </head>
@@ -122,25 +126,30 @@
         </header>
 
         <div class="card">
+            <div class="info-box" style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 15px; margin-bottom: 20px; font-size: 0.85rem; color: var(--text-secondary);">
+                <strong>ℹ️ How it works:</strong> Fill in Zone/Square for at least one point. 
+                If left empty, the grid reference will be inherited from the other point.
+            </div>
+
             <div class="grid-2" style="margin-bottom: 25px;">
                 <div class="card-inner">
                     <h3 class="section-title">Point A</h3>
                     <div class="coord-grid">
                         <div class="input-group">
                             <label class="form-label">Zone</label>
-                            <input type="text" id="zoneA" class="form-input mono zone-input" placeholder="38T" maxlength="3">
+                            <input type="text" id="zoneA" class="form-input mono zone-input" placeholder="31U" maxlength="3">
                         </div>
                         <div class="input-group">
                             <label class="form-label">Square</label>
-                            <input type="text" id="squareA" class="form-input mono square-input" placeholder="MN" maxlength="2">
+                            <input type="text" id="squareA" class="form-input mono square-input" placeholder="GR" maxlength="2">
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Easting</label>
-                            <input type="text" id="eastingA" class="form-input mono coord-input" placeholder="1234" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Easting <span style="color:#e74c3c">*</span></label>
+                            <input type="number" id="eastingA" class="form-input mono" placeholder="02026" min="0">
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Northing</label>
-                            <input type="text" id="northingA" class="form-input mono coord-input" placeholder="5678" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Northing <span style="color:#e74c3c">*</span></label>
+                            <input type="number" id="northingA" class="form-input mono" placeholder="96623" min="0">
                         </div>
                     </div>
                 </div>
@@ -150,25 +159,27 @@
                     <div class="coord-grid">
                         <div class="input-group">
                             <label class="form-label">Zone</label>
-                            <input type="text" id="zoneB" class="form-input mono zone-input" placeholder="38T" maxlength="3">
+                            <input type="text" id="zoneB" class="form-input mono zone-input" placeholder="31U" maxlength="3">
                         </div>
                         <div class="input-group">
                             <label class="form-label">Square</label>
-                            <input type="text" id="squareB" class="form-input mono square-input" placeholder="MN" maxlength="2">
+                            <input type="text" id="squareB" class="form-input mono square-input" placeholder="FR" maxlength="2">
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Easting</label>
-                            <input type="text" id="eastingB" class="form-input mono coord-input" placeholder="1235" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Easting <span style="color:#e74c3c">*</span></label>
+                            <input type="number" id="eastingB" class="form-input mono" placeholder="39540" min="0">
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Northing</label>
-                            <input type="text" id="northingB" class="form-input mono coord-input" placeholder="5679" maxlength="4" pattern="\d{4}">
+                            <label class="form-label">Northing <span style="color:#e74c3c">*</span></label>
+                            <input type="number" id="northingB" class="form-input mono" placeholder="94296" min="0">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="btn" id="calculateBtn" style="width: 100%; margin-bottom: 25px;">Calculate</button>
+            <div id="errorDisplay" class="error-message"></div>
+
+            <button class="btn" id="calculateBtn" style="width: 100%;">Calculate Distance & Bearing</button>
 
             <div class="result-box" id="resultDisplay" style="display: none;">
                 <div class="grid-2">
@@ -177,10 +188,11 @@
                         <div class="result-value" id="distanceValue">--</div>
                     </div>
                     <div class="result-item">
-                        <div class="result-label">Gisement / Bearing</div>
+                        <div class="result-label">Bearing</div>
                         <div class="result-value bearing-full" id="bearingValue">--</div>
                     </div>
                 </div>
+                <div class="calculation-detail" id="calcDetail"></div>
             </div>
         </div>
 
@@ -194,54 +206,19 @@
     </div>
 
     <script>
-        // DOM elements
-        const zoneA = document.getElementById('zoneA');
-        const squareA = document.getElementById('squareA');
-        const eastingA = document.getElementById('eastingA');
-        const northingA = document.getElementById('northingA');
-        const zoneB = document.getElementById('zoneB');
-        const squareB = document.getElementById('squareB');
-        const eastingB = document.getElementById('eastingB');
-        const northingB = document.getElementById('northingB');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const resultDisplay = document.getElementById('resultDisplay');
-        const distanceValue = document.getElementById('distanceValue');
-        const bearingValue = document.getElementById('bearingValue');
-        const historyList = document.getElementById('historyList');
-        const clearHistoryBtn = document.getElementById('clearHistory');
-        const themeToggle = document.getElementById('themeToggle');
-
-        // Direction arrows and labels
-        const directions = [
-            { label: 'N', arrow: '↑', min: 0, max: 22.5 },
-            { label: 'NE', arrow: '↗', min: 22.5, max: 67.5 },
-            { label: 'E', arrow: '→', min: 67.5, max: 112.5 },
-            { label: 'SE', arrow: '↘', min: 112.5, max: 157.5 },
-            { label: 'S', arrow: '↓', min: 157.5, max: 202.5 },
-            { label: 'SW', arrow: '↙', min: 202.5, max: 247.5 },
-            { label: 'W', arrow: '←', min: 247.5, max: 292.5 },
-            { label: 'NW', arrow: '↖', min: 292.5, max: 337.5 },
-            { label: 'N', arrow: '↑', min: 337.5, max: 360 }
-        ];
-
-        // Initialize
-        function init() {
-            loadTheme();
-            loadHistory();
-            setupEventListeners();
-        }
-
         // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
         function loadTheme() {
             const savedTheme = localStorage.getItem('sniperTheme');
             if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
+                html.setAttribute('data-theme', 'dark');
                 themeToggle.setAttribute('data-active', 'true');
             }
         }
 
         function toggleTheme() {
-            const html = document.documentElement;
             const isDark = html.getAttribute('data-theme') === 'dark';
             if (isDark) {
                 html.removeAttribute('data-theme');
@@ -254,71 +231,302 @@
             }
         }
 
-        // Calculate distance and bearing
-        function calculate() {
-            // Get values
-            const zA = zoneA.value.toUpperCase();
-            const sA = squareA.value.toUpperCase();
-            const eA = parseInt(eastingA.value) || 0;
-            const nA = parseInt(northingA.value) || 0;
-            const zB = zoneB.value.toUpperCase();
-            const sB = squareB.value.toUpperCase();
-            const eB = parseInt(eastingB.value) || 0;
-            const nB = parseInt(northingB.value) || 0;
+        themeToggle.addEventListener('click', toggleTheme);
 
-            // Validation
-            if (!zA || !sA || !eA || !nA || !zB || !sB || !eB || !nB) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            // Check if same zone and square
-            if (zA !== zB || sA !== sB) {
-                alert('Points must be in the same zone and square');
-                return;
-            }
-
-            // Convert to meters (4 digits = 10m resolution, add implied 0)
-            const eastA = eA * 10;
-            const northA = nA * 10;
-            const eastB = eB * 10;
-            const northB = nB * 10;
-
-            // Calculate distance
-            const dEasting = eastB - eastA;
-            const dNorthing = northB - northA;
-            const distance = Math.round(Math.sqrt(dEasting * dEasting + dNorthing * dNorthing));
-
-            // Calculate bearing in radians
-            const bearingRad = Math.atan2(dEasting, dNorthing);
+        // MGRS Conversion Library (from your working code)
+        const MGRS = (function() {
+            const n = .0033528106647474805,
+                a = .9996,
+                t = 2 * n - n * n,
+                m = t / (1 - t),
+                L = "CDEFGHJKLMNPQRSTUVWXX",
+                u = {
+                    C: -80, D: -72, E: -64, F: -56, G: -48, H: -40,
+                    J: -32, K: -24, L: -16, M: -8, N: 0,
+                    P: 8, Q: 16, R: 24, S: 32, T: 40,
+                    U: 48, V: 56, W: 64, X: 72
+                };
             
-            // Convert to degrees (0-360, clockwise from North)
-            let bearingDeg = (bearingRad * 180 / Math.PI);
-            if (bearingDeg < 0) bearingDeg += 360;
+            function $(s) {
+                const o = y(s);
+                return 6378137 * ((1 - t / 4 - 3 * t * t / 64 - 5 * t * t * t / 256) * o - 
+                    (3 * t / 8 + 3 * t * t / 32 + 45 * t * t * t / 1024) * Math.sin(2 * o) + 
+                    (15 * t * t / 256 + 45 * t * t * t / 1024) * Math.sin(4 * o) - 
+                    35 * t * t * t / 3072 * Math.sin(6 * o))
+            }
+            
+            function y(s) { return s * (Math.PI / 180) }
+            function E(s) { return s * (180 / Math.PI) }
+            
+            function b(s, o) {
+                if (isNaN(s) || isNaN(o))
+                    throw new Error("Invalid Lat/Lon value");
+                if (s < -90 || s > 90)
+                    throw new Error("Latitude out of range (-90 to 90)");
+                if (o < -180 || o > 180)
+                    throw new Error("Longitude out of range (-180 to 180)");
+                if (s > 84 || s < -80)
+                    throw new Error("Latitude out of MGRS range (-80 to 84)");
+                
+                const r = y(s), c = y(o),
+                    p = Math.floor((o + 180) / 6) + 1,
+                    i = y((p - 1) * 6 - 180 + 3),
+                    I = 6378137 / Math.sqrt(1 - t * Math.pow(Math.sin(r), 2)),
+                    h = Math.pow(Math.tan(r), 2),
+                    M = m * Math.pow(Math.cos(r), 2),
+                    l = (c - i) * Math.cos(r),
+                    d = $(s),
+                    f = a * I * (l + (1 - h + M) * Math.pow(l, 3) / 6 + (5 - 18 * h + h * h + 72 * M - 58 * m) * Math.pow(l, 5) / 120) + 5e5;
+                let g = a * (d + I * Math.tan(r) * (Math.pow(l, 2) / 2 + (5 - h + 9 * M + 4 * M * M) * Math.pow(l, 4) / 24 + (61 - 58 * h + h * h + 600 * M - 330 * m) * Math.pow(l, 6) / 720));
+                return s < 0 && (g += 1e7), {
+                    easting: f, northing: g, zone: p, band: L.charAt(Math.floor(s / 8) + 10)
+                }
+            }
+            
+            function z(s, o, r) {
+                const c = Math.floor(s / 1e5), p = Math.floor(o / 1e5),
+                    i = [["A", "B", "C", "D", "E", "F", "G", "H"], ["J", "K", "L", "M", "N", "P", "Q", "R"], ["S", "T", "U", "V", "W", "X", "Y", "Z"]],
+                    I = (r - 1) % 3, h = i[I][c - 1],
+                    M = "ABCDEFGHJKLMNPQRSTUV",
+                    l = (r - 1) % 2,
+                    d = (p + (l === 1 ? 5 : 0)) % 20,
+                    f = M[d];
+                return h + f
+            }
+            
+            function V(s, o, r, c) {
+                const p = c >= "N",
+                    i = (1 - Math.sqrt(1 - t)) / (1 + Math.sqrt(1 - t)),
+                    I = s - 5e5,
+                    h = p ? o : o - 1e7,
+                    M = y((r - 1) * 6 - 180 + 3),
+                    d = h / a / (6378137 * (1 - t / 4 - 3 * t * t / 64 - 5 * t * t * t / 256)),
+                    f = d + (3 * i / 2 - 27 * Math.pow(i, 3) / 32) * Math.sin(2 * d) + (21 * i * i / 16 - 55 * Math.pow(i, 4) / 32) * Math.sin(4 * d) + 151 * Math.pow(i, 3) / 96 * Math.sin(6 * d) + 1097 * Math.pow(i, 4) / 512 * Math.sin(8 * d),
+                    g = m * Math.pow(Math.cos(f), 2),
+                    w = Math.pow(Math.tan(f), 2),
+                    A = 6378137 / Math.sqrt(1 - t * Math.pow(Math.sin(f), 2)),
+                    st = 6378137 * (1 - t) / Math.pow(1 - t * Math.pow(Math.sin(f), 2), 1.5),
+                    C = I / (A * a),
+                    rt = f - A * Math.tan(f) / st * (Math.pow(C, 2) / 2 - (5 + 3 * w + 10 * g - 4 * g * g - 9 * m) * Math.pow(C, 4) / 24 + (61 + 90 * w + 298 * g + 45 * w * w - 252 * m - 3 * g * g) * Math.pow(C, 6) / 720),
+                    K = M + (C - (1 + 2 * w + g) * Math.pow(C, 3) / 6 + (5 - 2 * g + 28 * w - 3 * g * g + 8 * m + 24 * w * w) * Math.pow(C, 5) / 120) / Math.cos(f);
+                return [E(rt), E(K)]
+            }
+            
+            function dt(s) {
+                s = s.trim().toUpperCase();
+                const o = s.match(/^(\d{1,2})([C-X])/);
+                if (!o) throw new Error("Invalid MGRS GZD (e.g., 11S, 32U)");
+                const r = parseInt(o[1], 10), c = o[2];
+                let p = s.substring(o[0].length).trim();
+                const i = p.match(/^[A-Z]{2}/);
+                if (!i) throw new Error("Invalid 100k Grid ID (e.g., LT, PH)");
+                const I = i[0].charAt(0), h = i[0].charAt(1);
+                let M = p.substring(2).trim(), l;
+                const d = M.split(/\s+/).filter(_ => _);
+                if (d.length === 0) l = "";
+                else if (d.length === 1) {
+                    if (l = d[0], l.length % 2 !== 0)
+                        throw new Error("The numerical part must have an even number of total digits");
+                } else if (d.length === 2) {
+                    let _ = d[0], N = d[1];
+                    _.length > N.length ? N = N.padEnd(_.length, "0") : N.length > _.length && (_ = _.padEnd(N.length, "0")),
+                    l = _ + N
+                } else throw new Error("Invalid format for MGRS numeric part");
+                
+                const f = ["ABCDEFGH", "JKLMNPQR", "STUVWXYZ"],
+                    g = (r - 1) % 3,
+                    w = f[g].indexOf(I) + 1;
+                if (w === 0) throw new Error(`Invalid column letter '${I}' for zone ${r}`);
+                const A = w * 1e5,
+                    C = "ABCDEFGHJKLMNPQRSTUV".indexOf(h);
+                if (C < 0) throw new Error(`Invalid row letter '${h}'`);
+                const K = (r - 1) % 2 === 1 ? 5 : 0,
+                    ut = (C - K + 20) % 20 * 1e5,
+                    U = l.length / 2,
+                    ht = parseFloat(l.substring(0, U)) * Math.pow(10, 5 - U),
+                    gt = parseFloat(l.substring(U)) * Math.pow(10, 5 - U),
+                    at = c >= "N",
+                    X = u[c];
+                if (typeof X > "u") throw new Error(`Invalid MGRS band letter '${c}'`);
+                const mt = X + (c === "X" ? 12 : 8),
+                    it = $(X),
+                    lt = $(mt),
+                    pt = at ? it : 1e7 + it,
+                    ft = at ? lt : 1e7 + lt;
+                let H = ut + gt;
+                for (; H < pt;) H += 2e6;
+                for (; H > ft;) H -= 2e6;
+                return { easting: A + ht, northing: H, zone: r, band: c }
+            }
+            
+            return {
+                forward: function(s, o) {
+                    o = o || 5;
+                    const r = b(s[1], s[0]),
+                        c = z(r.easting, r.northing, r.zone),
+                        p = String(Math.floor(r.easting) % 1e5).padStart(5, "0"),
+                        i = String(Math.floor(r.northing) % 1e5).padStart(5, "0");
+                    return `${r.zone}${r.band} ${c} ${p.substring(0, o)} ${i.substring(0, o)}`
+                },
+                inverse: function(s) {
+                    const o = dt(s),
+                        r = V(o.easting, o.northing, o.zone, o.band),
+                        c = r[0], p = r[1];
+                    if (c < -90 || c > 90 || p < -180 || p > 180)
+                        throw new Error("The GZD and 100k Grid ID combination is impossible");
+                    return r
+                }
+            }
+        })();
 
-            // Convert to mils (0-6400, clockwise from North)
-            const bearingMils = Math.round(bearingDeg * 6400 / 360);
-
-            // Get direction
-            const direction = directions.find(d => bearingDeg >= d.min && bearingDeg < d.max) || directions[0];
-
-            // Display results
-            distanceValue.textContent = distance + ' m';
-            bearingValue.innerHTML = `${bearingMils} mils (${bearingDeg.toFixed(1)}°) <span class="direction-arrow">${direction.arrow}</span> ${direction.label}`;
-            resultDisplay.style.display = 'block';
-
-            // Save to history
-            saveToHistory({
-                coordA: `${zA} ${sA} ${eA} ${nA}`,
-                coordB: `${zB} ${sB} ${eB} ${nB}`,
-                distance: distance,
-                bearing: bearingMils,
-                bearingDeg: bearingDeg.toFixed(1),
-                direction: direction
-            });
+        // Haversine formula
+        function calculateDistanceBearing(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = Math.round(R * c);
+            const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI/180);
+            const x = Math.cos(lat1 * Math.PI/180) * Math.sin(lat2 * Math.PI/180) -
+                      Math.sin(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.cos(dLon);
+            let bearing = Math.atan2(y, x) * 180 / Math.PI;
+            bearing = (bearing + 360) % 360;
+            return { distance, bearing };
         }
 
-        // Save calculation to history
+        const directions = [
+            { label: 'N', arrow: '↑', min: 0, max: 22.5 },
+            { label: 'NE', arrow: '↗', min: 22.5, max: 67.5 },
+            { label: 'E', arrow: '→', min: 67.5, max: 112.5 },
+            { label: 'SE', arrow: '↘', min: 112.5, max: 157.5 },
+            { label: 'S', arrow: '↓', min: 157.5, max: 202.5 },
+            { label: 'SW', arrow: '↙', min: 202.5, max: 247.5 },
+            { label: 'W', arrow: '←', min: 247.5, max: 292.5 },
+            { label: 'NW', arrow: '↖', min: 292.5, max: 337.5 },
+            { label: 'N', arrow: '↑', min: 337.5, max: 360 }
+        ];
+
+        function buildMGRS(zone, square, easting, northing) {
+            const z = zone.toUpperCase();
+            const s = square.toUpperCase();
+            const e = easting.toString().padStart(5, '0');
+            const n = northing.toString().padStart(5, '0');
+            return `${z}${s}${e}${n}`;
+        }
+
+        function calculate() {
+            const errorDisplay = document.getElementById('errorDisplay');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const distanceValue = document.getElementById('distanceValue');
+            const bearingValue = document.getElementById('bearingValue');
+            const calcDetail = document.getElementById('calcDetail');
+
+            try {
+                errorDisplay.style.display = 'none';
+                errorDisplay.textContent = '';
+                resultDisplay.style.display = 'none';
+
+                let zA = document.getElementById('zoneA').value.trim();
+                let sA = document.getElementById('squareA').value.trim();
+                const eA = document.getElementById('eastingA').value.trim();
+                const nA = document.getElementById('northingA').value.trim();
+                let zB = document.getElementById('zoneB').value.trim();
+                let sB = document.getElementById('squareB').value.trim();
+                const eB = document.getElementById('eastingB').value.trim();
+                const nB = document.getElementById('northingB').value.trim();
+
+                // Check which point has the grid reference (zone + square)
+                const hasGridA = zA && sA;
+                const hasGridB = zB && sB;
+                const hasPartialA = (zA && !sA) || (!zA && sA);
+                const hasPartialB = (zB && !sB) || (!zB && sB);
+
+                // Validate: no partial grid references allowed
+                if (hasPartialA) {
+                    throw new Error('Point A: Please fill in both Zone and Square, or leave both empty');
+                }
+                if (hasPartialB) {
+                    throw new Error('Point B: Please fill in both Zone and Square, or leave both empty');
+                }
+
+                // At least one point must have the grid reference
+                if (!hasGridA && !hasGridB) {
+                    throw new Error('Please fill in Zone and Square for at least one point');
+                }
+
+                // If Point A has no grid, use Point B's
+                if (!hasGridA && hasGridB) {
+                    zA = zB;
+                    sA = sB;
+                }
+
+                // If Point B has no grid, use Point A's
+                if (!hasGridB && hasGridA) {
+                    zB = zA;
+                    sB = sA;
+                }
+
+                // Both points need easting/northing
+                if (!eA || !nA) {
+                    throw new Error('Point A: Please fill in Easting and Northing');
+                }
+                if (!eB || !nB) {
+                    throw new Error('Point B: Please fill in Easting and Northing');
+                }
+
+                if (sA.length !== 2 || sB.length !== 2) {
+                    throw new Error('Square ID must be 2 letters (e.g., GR)');
+                }
+
+                // Convert MGRS to Lat/Lon using the working library
+                const mgrsA = buildMGRS(zA, sA, eA, nA);
+                const mgrsB = buildMGRS(zB, sB, eB, nB);
+                
+                const coordA = MGRS.inverse(mgrsA);
+                const coordB = MGRS.inverse(mgrsB);
+
+                // Calculate distance and bearing
+                const result = calculateDistanceBearing(coordA[0], coordA[1], coordB[0], coordB[1]);
+                const bearingMils = Math.round(result.bearing * 6400 / 360);
+                const direction = directions.find(d => result.bearing >= d.min && result.bearing < d.max) || directions[0];
+
+                // Format distance
+                let distanceText;
+                if (result.distance < 1000) {
+                    distanceText = result.distance + ' m';
+                } else {
+                    distanceText = (result.distance / 1000).toFixed(2) + ' km';
+                }
+                distanceValue.textContent = distanceText;
+
+                // Format bearing: degrees first, then mils in parentheses
+                bearingValue.innerHTML = `${result.bearing.toFixed(1)}° (${bearingMils} mils) <span class="direction-arrow">${direction.arrow}</span> ${direction.label}`;
+                calcDetail.innerHTML = `
+                    <strong>Point A:</strong> ${zA} ${sA} ${eA.padStart(5,'0')} ${nA.padStart(5,'0')}<br>
+                    Lat/Lon: ${coordA[0].toFixed(6)}°, ${coordA[1].toFixed(6)}°<br><br>
+                    <strong>Point B:</strong> ${zB} ${sB} ${eB.padStart(5,'0')} ${nB.padStart(5,'0')}<br>
+                    Lat/Lon: ${coordB[0].toFixed(6)}°, ${coordB[1].toFixed(6)}°
+                `;
+                resultDisplay.style.display = 'block';
+
+                saveToHistory({
+                    coordA: `${zA} ${sA} ${eA} ${nA}`,
+                    coordB: `${zB} ${sB} ${eB} ${nB}`,
+                    distance: result.distance,
+                    bearing: bearingMils,
+                    bearingDeg: result.bearing.toFixed(1),
+                    direction: direction
+                });
+            } catch (error) {
+                errorDisplay.textContent = 'Error: ' + error.message;
+                errorDisplay.style.display = 'block';
+                console.error(error);
+            }
+        }
+
         function saveToHistory(calculation) {
             let history = JSON.parse(localStorage.getItem('mgrsHistory') || '[]');
             history.unshift(calculation);
@@ -327,14 +535,11 @@
             displayHistory();
         }
 
-        // Load and display history
-        function loadHistory() {
-            displayHistory();
-        }
-
         function displayHistory() {
             const history = JSON.parse(localStorage.getItem('mgrsHistory') || '[]');
-            
+            const historyList = document.getElementById('historyList');
+            const clearHistoryBtn = document.getElementById('clearHistory');
+
             if (history.length === 0) {
                 historyList.innerHTML = '<div class="empty-history">No calculations yet</div>';
                 clearHistoryBtn.style.display = 'none';
@@ -352,28 +557,20 @@
             clearHistoryBtn.style.display = 'block';
         }
 
-        // Clear history
-        function clearHistory() {
+        document.getElementById('calculateBtn').addEventListener('click', calculate);
+        document.getElementById('clearHistory').addEventListener('click', function() {
             localStorage.removeItem('mgrsHistory');
             displayHistory();
-        }
+        });
 
-        // Setup event listeners
-        function setupEventListeners() {
-            calculateBtn.addEventListener('click', calculate);
-            clearHistoryBtn.addEventListener('click', clearHistory);
-            themeToggle.addEventListener('click', toggleTheme);
-
-            // Allow Enter key to calculate
-            document.querySelectorAll('input').forEach(input => {
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') calculate();
-                });
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') calculate();
             });
-        }
+        });
 
-        // Initialize
-        init();
+        loadTheme();
+        displayHistory();
     </script>
 </body>
 </html>

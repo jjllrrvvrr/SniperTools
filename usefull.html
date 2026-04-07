@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Useful Links</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Useful Links specific styles */
+        
+        .links-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .link-category {
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+        }
+        
+        .category-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+        
+        .link-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .link-text {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .link-arrow {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .link-item:hover .link-arrow {
+            color: var(--accent-color);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .links-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .link-category {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .link-item {
+                padding: 10px 12px;
+            }
+            
+            .link-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Useful Links</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="links-container">
+            <div class="card">
+                <div class="category-title">📚 Documentation</div>
+                <div class="link-list">
+                    <a href="https://en.wikipedia.org/wiki/Sniper" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">📖</span>
+                        <span class="link-text">Sniper (Wikipedia)</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://en.wikipedia.org/wiki/Minute_and_second_of_arc" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">📖</span>
+                        <span class="link-text">Minute of Angle (MOA)</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://en.wikipedia.org/wiki/Military_Grid_Reference_System" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">📖</span>
+                        <span class="link-text">MGRS System</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="category-title">🎯 Ballistics</div>
+                <div class="link-list">
+                    <a href="https://www.jbmballistics.com/" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🧮</span>
+                        <span class="link-text">JBM Ballistics Calculator</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://hornady.com/ballistic-calculator" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🧮</span>
+                        <span class="link-text">Hornady Ballistics</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://www.federalpremium.com/ballistics/" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🧮</span>
+                        <span class="link-text">Federal Ballistics</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="category-title">🌍 Maps & Navigation</div>
+                <div class="link-list">
+                    <a href="https://mappingsupport.com/p2/gissurfer.php?center=31UGR01999654&zoom=13&scale=meters&basemap=Open_Topo_Map" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🗺️</span>
+                        <span class="link-text">MGRS map</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://topomapviewer.ngi.be/?l=fr&baselayer=crossborder.topo&x=659804.50&y=623070.50&zoom=1" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🗺️</span>
+                        <span class="link-text">NGI Viewer</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://opentopomap.org/#map=5/49.023/10.020" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🗺️</span>
+                        <span class="link-text">OpenTopoMap</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="category-title">📱 Social</div>
+                <div class="link-list">
+                    <a href="https://www.instagram.com/Belgiansniper" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">📷</span>
+                        <span class="link-text">Belgian Sniper</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="category-title">🔧 Resources</div>
+                <div class="link-list">
+                    <a href="https://www.snipercentral.com/" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">🎯</span>
+                        <span class="link-text">Sniper Central</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                    <a href="https://www.reddit.com/r/sniper/" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <span class="link-icon">📝</span>
+                        <span class="link-text">/r/sniper/</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+        loadTheme();
+    </script>
+</body>
+</html>

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Judging Distance Calculator</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .targets-table {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 100px 1fr 120px 120px auto;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 120px 120px auto;
+            gap: 10px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row:hover {
+            background-color: var(--cell-bg);
+        }
+
+        .table-row.alert {
+            background-color: rgba(230, 126, 34, 0.1);
+        }
+
+        .table-row.alert:hover {
+            background-color: rgba(230, 126, 34, 0.15);
+        }
+
+        .cell-target {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .cell-input input {
+            width: 100%;
+            height: 46px;
+            padding: 0 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.1rem;
+            text-align: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cell-input input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        [data-theme="dark"] .cell-input input:focus {
+            box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.2);
+        }
+
+        .cell-min, .cell-max {
+            text-align: center;
+            height: 46px;
+            padding: 0 12px;
+            background-color: var(--cell-bg);
+            border: 2px solid var(--cell-border);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cell-min:empty::before, .cell-max:empty::before {
+            content: '-';
+            color: var(--text-secondary);
+        }
+
+        .cell-alert {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--alert-color);
+            font-size: 1.3rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .table-row.alert .cell-alert {
+            opacity: 1;
+        }
+
+        .reset-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .reset-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .reset-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.98);
+        }
+
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .legend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .legend h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .config-toggle {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            fill: var(--text-secondary);
+        }
+
+        .config-toggle:hover {
+            transform: rotate(90deg);
+            fill: var(--accent-color);
+        }
+
+        .config-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: var(--cell-bg);
+            border-radius: 8px;
+            margin-top: 0;
+        }
+
+        .config-panel.open {
+            max-height: 600px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .config-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .config-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 60px;
+            font-weight: 500;
+        }
+
+        .config-input {
+            flex: 1;
+            min-width: 80px;
+            max-width: 140px;
+            height: 40px;
+            padding: 0 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            text-align: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .config-input:disabled {
+            background-color: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .config-input.percent {
+            width: 60px;
+        }
+
+        .config-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .config-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .config-delete:hover {
+            background-color: rgba(231, 76, 60, 0.2);
+            opacity: 1;
+        }
+
+        .config-delete:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .config-add-btn, .config-reset-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border: 2px solid var(--accent-color);
+            border-radius: 6px;
+            background-color: transparent;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .config-add-btn:hover, .config-reset-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .config-add-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .config-reset-btn {
+            margin-left: 10px;
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.range1 { background-color: #666666; }
+        .legend-dot.range2 { background-color: #888888; }
+        .legend-dot.range3 { background-color: #aaaaaa; }
+
+        @media (max-width: 768px) {
+            .table-header {
+                display: none;
+            }
+
+            .table-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .cell-target {
+                grid-column: 1 / -1;
+                text-align: center;
+                font-size: 1.1rem;
+                padding-bottom: 5px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .cell-input {
+                grid-column: 1 / -1;
+            }
+
+            .cell-min {
+                grid-column: 1;
+                position: relative;
+            }
+
+            .cell-max {
+                grid-column: 2;
+                position: relative;
+            }
+
+            .cell-min::before {
+                content: 'MIN';
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: var(--card-bg);
+                padding: 0 8px;
+                font-size: 0.65rem;
+                color: var(--text-secondary);
+                font-weight: 600;
+            }
+
+            .cell-max::before {
+                content: 'MAX';
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: var(--card-bg);
+                padding: 0 8px;
+                font-size: 0.65rem;
+                color: var(--text-secondary);
+                font-weight: 600;
+            }
+
+            .cell-alert {
+                grid-column: 1 / -1;
+                font-size: 1rem;
+            }
+
+            .table-row.alert .cell-alert::after {
+                content: ' > 1000m';
+                font-size: 0.85rem;
+                margin-left: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .logo {
+                transform: scale(1);
+            }
+
+            .logo-title {
+                gap: 10px;
+            }
+
+            .targets-table {
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="../index.html" aria-label="Back to home">
+                    <img src="../logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Judging Distance Calculator</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="targets-table">
+            <div class="table-header">
+                <div>Target</div>
+                <div>Distance (m)</div>
+                <div>Min (m)</div>
+                <div>Max (m)</div>
+                <div></div>
+            </div>
+            <div id="tableBody">
+                <!-- Les 10 lignes seront générées par JavaScript -->
+            </div>
+        </div>
+
+        <div class="reset-section">
+            <button class="reset-btn" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-header">
+                <h3>Calculation rules</h3>
+                <svg class="config-toggle" id="configToggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Configure calculation ranges">
+                    <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.63c-.04.34-.07.67-.07 1 0 .33.03.66.07.97l-2.11 1.63c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z"/>
+                </svg>
+            </div>
+            <div id="legendContent">
+                <div class="legend-item">
+                    <div class="legend-dot range1"></div>
+                    <span>0 - 300m : ±15%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot range2"></div>
+                    <span>301 - 600m : ±10%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot range3"></div>
+                    <span>601 - 1000m : ±5%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot range3"></div>
+                    <span>> 1000m : ⚠️ Alert + calculation at 5%</span>
+                </div>
+            </div>
+            <div class="config-panel" id="configPanel">
+                <div class="config-header">Range configuration</div>
+                <div id="configRows"></div>
+                <div class="config-actions">
+                    <button class="config-add-btn" id="configAddBtn">+ Add range</button>
+                    <button class="config-reset-btn" id="configResetBtn">Reset to default values</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion du thème
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Génération des 10 lignes
+        const tableBody = document.getElementById('tableBody');
+
+        function createRow(index) {
+            const row = document.createElement('div');
+            row.className = 'table-row';
+            row.dataset.index = index;
+
+            row.innerHTML = `
+                <div class="cell-target">Target ${index + 1}</div>
+                <div class="cell-input">
+                    <input type="number" id="distance-${index}" min="0" step="1" placeholder="Enter distance">
+                </div>
+                <div class="cell-min" id="min-${index}"></div>
+                <div class="cell-max" id="max-${index}"></div>
+                <div class="cell-alert">⚠️</div>
+            `;
+
+            return row;
+        }
+
+        // Créer les 10 lignes
+        for (let i = 0; i < 10; i++) {
+            tableBody.appendChild(createRow(i));
+        }
+
+        // Range configuration de calcul
+        const defaultRanges = [
+            { min: 0, max: 300, percent: 15 },
+            { min: 301, max: 600, percent: 10 },
+            { min: 601, max: 1000, percent: 5 },
+            { min: 1001, max: null, percent: 5 }
+        ];
+
+        let currentRanges = [];
+
+        // Charger la configuration depuis localStorage
+        function loadConfig() {
+            const savedConfig = localStorage.getItem('jdConfig');
+            if (savedConfig) {
+                try {
+                    currentRanges = JSON.parse(savedConfig);
+                } catch (e) {
+                    currentRanges = [...defaultRanges];
+                }
+            } else {
+                currentRanges = [...defaultRanges];
+            }
+        }
+
+        // Sauvegarder la configuration
+        function saveConfig() {
+            localStorage.setItem('jdConfig', JSON.stringify(currentRanges));
+            updateLegendDisplay();
+            // Recalculer tous les targets avec les nouvelles plages
+            for (let i = 0; i < 10; i++) {
+                updateRow(i);
+            }
+        }
+
+        // Mettre à jour l'affichage de la légende
+        function updateLegendDisplay() {
+            const legendContent = document.getElementById('legendContent');
+            const colors = ['range1', 'range2', 'range3', 'range3', 'range1', 'range2', 'range3', 'range3', 'range1', 'range2'];
+            
+            let html = '';
+            currentRanges.forEach((range, index) => {
+                const colorClass = colors[index % colors.length];
+                let label = '';
+                if (range.max === null) {
+                    label = `> ${range.min}m`;
+                } else {
+                    label = `${range.min} - ${range.max}m`;
+                }
+                const alertText = range.max === null ? ' ⚠️ Alert' : '';
+                html += `
+                    <div class="legend-item">
+                        <div class="legend-dot ${colorClass}"></div>
+                        <span>${label} : ±${range.percent}%${alertText}</span>
+                    </div>
+                `;
+            });
+            legendContent.innerHTML = html;
+        }
+
+        // Logique de calcul - utilise les plages configurées
+        function getPercent(distance) {
+            if (isNaN(distance) || distance < 0) return 0;
+            
+            for (const range of currentRanges) {
+                if (range.max === null) {
+                    // Dernière plage (infini)
+                    if (distance >= range.min) {
+                        return range.percent;
+                    }
+                } else {
+                    if (distance >= range.min && distance <= range.max) {
+                        return range.percent;
+                    }
+                }
+            }
+            // Par défaut, retourner le pourcentage de la dernière plage
+            return currentRanges.length > 0 ? currentRanges[currentRanges.length - 1].percent : 5;
+        }
+
+        // Vérifier si distance est au-delà de la dernière plage définie
+        function isBeyondLastRange(distance) {
+            if (currentRanges.length === 0) return false;
+            const lastRange = currentRanges[currentRanges.length - 1];
+            if (lastRange.max === null) {
+                return distance > 1000 && distance >= lastRange.min; // Alerte si > 1000m
+            }
+            return false;
+        }
+
+        function calculateValues(distance, percent) {
+            const min = distance * (1 - percent / 100);
+            const max = distance * (1 + percent / 100);
+            return {
+                min: Math.round(min),
+                max: Math.round(max)
+            };
+        }
+
+        function updateRow(index) {
+            const input = document.getElementById(`distance-${index}`);
+            const row = input.closest('.table-row');
+            const minCell = document.getElementById(`min-${index}`);
+            const maxCell = document.getElementById(`max-${index}`);
+
+            const distance = parseFloat(input.value);
+
+            if (isNaN(distance) || input.value === '') {
+                minCell.textContent = '';
+                maxCell.textContent = '';
+                row.classList.remove('alert');
+                return;
+            }
+
+            // Vérifier si alerte (> 1000m)
+            if (distance > 1000) {
+                row.classList.add('alert');
+            } else {
+                row.classList.remove('alert');
+            }
+
+            const percent = getPercent(distance);
+            const values = calculateValues(distance, percent);
+
+            minCell.textContent = values.min;
+            maxCell.textContent = values.max;
+        }
+
+        // Écouteurs d'événements pour chaque input
+        for (let i = 0; i < 10; i++) {
+            const input = document.getElementById(`distance-${i}`);
+            input.addEventListener('input', () => {
+                updateRow(i);
+                saveData();
+            });
+        }
+
+        // Sauvegarde dans localStorage
+        function saveData() {
+            const data = [];
+            for (let i = 0; i < 10; i++) {
+                const input = document.getElementById(`distance-${i}`);
+                data.push(input.value);
+            }
+            localStorage.setItem('sniperData', JSON.stringify(data));
+        }
+
+        // Chargement depuis localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('sniperData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                for (let i = 0; i < 10 && i < data.length; i++) {
+                    const input = document.getElementById(`distance-${i}`);
+                    if (data[i]) {
+                        input.value = data[i];
+                        updateRow(i);
+                    }
+                }
+            }
+        }
+
+        // Bouton Reset
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Do you really want to reset all values?')) {
+                for (let i = 0; i < 10; i++) {
+                    const input = document.getElementById(`distance-${i}`);
+                    const row = input.closest('.table-row');
+                    const minCell = document.getElementById(`min-${i}`);
+                    const maxCell = document.getElementById(`max-${i}`);
+
+                    input.value = '';
+                    minCell.textContent = '';
+                    maxCell.textContent = '';
+                    row.classList.remove('alert');
+                }
+                localStorage.removeItem('sniperData');
+            }
+        });
+
+        // Configuration Panel
+        const configToggle = document.getElementById('configToggle');
+        const configPanel = document.getElementById('configPanel');
+        const configAddBtn = document.getElementById('configAddBtn');
+        const configResetBtn = document.getElementById('configResetBtn');
+        const configRows = document.getElementById('configRows');
+
+        let isConfigOpen = false;
+
+        configToggle.addEventListener('click', () => {
+            isConfigOpen = !isConfigOpen;
+            if (isConfigOpen) {
+                configPanel.classList.add('open');
+                renderConfigPanel();
+            } else {
+                configPanel.classList.remove('open');
+            }
+        });
+
+        function renderConfigPanel() {
+            configRows.innerHTML = '';
+            
+            currentRanges.forEach((range, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                row.dataset.index = index;
+
+                const isFirst = index === 0;
+                const isLast = index === currentRanges.length - 1;
+                const canDelete = currentRanges.length > 2;
+
+                row.innerHTML = `
+                    <span class="config-label">Range ${index + 1}</span>
+                    <input type="number" class="config-input config-min" value="${range.min}" 
+                           ${isFirst ? 'disabled' : ''} placeholder="Min">
+                    <span>-</span>
+                    <input type="number" class="config-input config-max" value="${range.max !== null ? range.max : ''}" 
+                           ${isLast ? 'disabled placeholder="∞"' : 'placeholder="Max"'}>
+                    <input type="number" class="config-input percent" value="${range.percent}" placeholder="%">
+                    <button class="config-delete" ${!canDelete ? 'disabled' : ''} title="Supprimer cette plage">🗑️</button>
+                `;
+
+                configRows.appendChild(row);
+
+                // Event listeners pour les inputs
+                const minInput = row.querySelector('.config-min');
+                const maxInput = row.querySelector('.config-max');
+                const percentInput = row.querySelector('.percent');
+                const deleteBtn = row.querySelector('.config-delete');
+
+                if (!isFirst) {
+                    minInput.addEventListener('input', () => updateConfigRow(index, 'min', minInput.value));
+                    minInput.addEventListener('blur', () => validateContinuity());
+                }
+
+                if (!isLast) {
+                    maxInput.addEventListener('input', () => updateConfigRow(index, 'max', maxInput.value));
+                    maxInput.addEventListener('blur', () => validateContinuity());
+                }
+
+                percentInput.addEventListener('input', () => updateConfigRow(index, 'percent', percentInput.value));
+
+                if (canDelete) {
+                    deleteBtn.addEventListener('click', () => deleteConfigRow(index));
+                }
+            });
+
+            updateButtonsState();
+        }
+
+        function updateConfigRow(index, field, value) {
+            const numValue = value === '' ? (field === 'max' ? null : 0) : parseInt(value);
+            currentRanges[index][field] = numValue;
+            saveConfig();
+        }
+
+        function deleteConfigRow(index) {
+            if (currentRanges.length <= 2) return;
+            currentRanges.splice(index, 1);
+            // Recalculer les continuités
+            ensureContinuity();
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function addConfigRow() {
+            if (currentRanges.length >= 10) return;
+            
+            const lastRange = currentRanges[currentRanges.length - 1];
+            if (lastRange.max !== null) return; // Ne devrait pas arriver
+
+            // Transformer l'ancienne dernière plage
+            const newMax = lastRange.min + 300; // Valeur par défaut
+            currentRanges[currentRanges.length - 1] = {
+                min: lastRange.min,
+                max: newMax,
+                percent: lastRange.percent
+            };
+
+            // Add new infinite range
+            currentRanges.push({
+                min: newMax + 1,
+                max: null,
+                percent: lastRange.percent
+            });
+
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function ensureContinuity() {
+            // Assurer la continuité : min d'une plage = max de la précédente + 1
+            for (let i = 1; i < currentRanges.length; i++) {
+                const prevMax = currentRanges[i - 1].max;
+                if (prevMax !== null && currentRanges[i].min !== prevMax + 1) {
+                    currentRanges[i].min = prevMax + 1;
+                }
+            }
+        }
+
+        function validateContinuity() {
+            ensureContinuity();
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function updateButtonsState() {
+            configAddBtn.disabled = currentRanges.length >= 10;
+        }
+
+        function resetConfig() {
+            if (confirm('Do you really want to reset ranges to default values?')) {
+                currentRanges = JSON.parse(JSON.stringify(defaultRanges));
+                saveConfig();
+                renderConfigPanel();
+            }
+        }
+
+        configAddBtn.addEventListener('click', addConfigRow);
+        configResetBtn.addEventListener('click', resetConfig);
+
+        // Initialisation
+        loadTheme();
+        loadConfig();
+        updateLegendDisplay();
+        loadData();
+    </script>
+</body>
+</html>

@@ -3,53 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sniper Tools - Judging Distance Calculator (Fusion)</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Sniper Tools - Judging Distance Calculator</title>
+    <link rel="stylesheet" href="../styles.css">
     <style>
-        /* JD4 specific styles - Fusion of jd.html and jd2.html with pill system */
-        
-        /* Tabs container */
-        .tabs-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            gap: 10px;
-        }
-        
-        .tab-btn {
-            padding: 12px 30px;
-            border: 2px solid var(--border-color);
-            background-color: var(--card-bg);
-            color: var(--text-secondary);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--text-color);
-        }
-        
-        .tab-btn.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--bg-color);
-        }
-        
-        .mode-description {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-        
-        /* Table styles */
         .targets-table {
             width: 100%;
             background-color: var(--card-bg);
@@ -242,87 +198,111 @@
             color: var(--text-color);
             margin-bottom: 12px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .config-row {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
+            flex-wrap: nowrap;
         }
 
-        .config-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .config-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 60px;
+            font-weight: 500;
         }
 
-        .config-row input {
-            width: 80px;
-            height: 36px;
-            padding: 0 10px;
+        .config-input {
+            flex: 1;
+            min-width: 80px;
+            max-width: 140px;
+            height: 40px;
+            padding: 0 12px;
             border: 2px solid var(--input-border);
             border-radius: 6px;
             background-color: var(--input-bg);
             color: var(--text-color);
-            font-size: 0.95rem;
+            font-size: 1rem;
             text-align: center;
+            transition: border-color 0.2s ease;
         }
 
-        .config-row input:focus {
+        .config-input:focus {
             outline: none;
             border-color: var(--accent-color);
         }
 
-        .config-label {
-            flex: 1;
-            font-size: 0.85rem;
+        .config-input:disabled {
+            background-color: var(--border-color);
             color: var(--text-secondary);
+            cursor: not-allowed;
         }
 
-        .config-percent {
-            width: 60px !important;
+        .config-input.percent {
+            width: 60px;
+        }
+
+        .config-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .config-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .config-delete:hover {
+            background-color: rgba(231, 76, 60, 0.2);
+            opacity: 1;
+        }
+
+        .config-delete:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .config-add-btn, .config-reset-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border: 2px solid var(--accent-color);
+            border-radius: 6px;
+            background-color: transparent;
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .config-add-btn:hover, .config-reset-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .config-add-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .config-reset-btn {
+            margin-left: 10px;
         }
 
         .config-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
-        }
-
-        .config-add-btn {
-            flex: 1;
-            padding: 8px 15px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .config-add-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .config-reset-btn {
-            padding: 8px 15px;
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .config-reset-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+            flex-wrap: wrap;
         }
 
         .legend-item {
@@ -339,23 +319,10 @@
             border-radius: 50%;
         }
 
-        .legend-dot.range1 { background-color: var(--alert-color); }
-        .legend-dot.range2 { background-color: #666; }
-        .legend-dot.range3 { background-color: #999; }
+        .legend-dot.range1 { background-color: #666666; }
+        .legend-dot.range2 { background-color: #888888; }
+        .legend-dot.range3 { background-color: #aaaaaa; }
 
-        /* Mode ballistic info */
-        .ballistic-info {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            padding: 10px;
-            background-color: var(--bg-color);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
             .table-header {
                 display: none;
@@ -427,24 +394,19 @@
                 font-size: 0.85rem;
                 margin-left: 5px;
             }
-
-            .tabs-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .tab-btn {
-                width: 100%;
-            }
-
-            .config-row {
-                flex-wrap: wrap;
-            }
         }
 
         @media (max-width: 480px) {
             body {
                 padding: 15px;
+            }
+
+            .logo {
+                transform: scale(1);
+            }
+
+            .logo-title {
+                gap: 10px;
             }
 
             .targets-table {
@@ -457,8 +419,8 @@
     <div class="container">
         <header>
             <div class="logo-title">
-                <a href="index.html" aria-label="Back to home">
-                    <img src="logo.png" alt="Logo" class="logo">
+                <a href="../index.html" aria-label="Back to home">
+                    <img src="../logo.png" alt="Logo" class="logo">
                 </a>
                 <div>
                     <h1>Sniper Tools</h1>
@@ -470,16 +432,6 @@
             </div>
         </header>
 
-        <!-- Mode Switcher -->
-        <div class="tabs-container">
-            <button class="tab-btn active" data-mode="percent">By Percentage</button>
-            <button class="tab-btn" data-mode="ballistic">Ballistic Data</button>
-        </div>
-
-        <div class="mode-description" id="modeDescription">
-            Calculate Min/Max values based on configurable percentage margins
-        </div>
-
         <div class="targets-table">
             <div class="table-header">
                 <div>Target</div>
@@ -489,7 +441,7 @@
                 <div></div>
             </div>
             <div id="tableBody">
-                <!-- The 10 rows will be generated by JavaScript -->
+                <!-- Les 10 lignes seront générées par JavaScript -->
             </div>
         </div>
 
@@ -497,12 +449,11 @@
             <button class="reset-btn" id="resetBtn">Reset</button>
         </div>
 
-        <!-- Legend Section -->
-        <div class="legend" id="percentLegend">
+        <div class="legend">
             <div class="legend-header">
-                <h3>Calculation Rules</h3>
+                <h3>Calculation rules</h3>
                 <svg class="config-toggle" id="configToggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Configure calculation ranges">
-                    <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.63c-.04.34-.07.67-.07 1 0 .33.03.66.07.97l-2.11 1.63c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59-1.69-.98l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z"/>
+                    <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.63c-.04.34-.07.67-.07 1 0 .33.03.66.07.97l-2.11 1.63c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z"/>
                 </svg>
             </div>
             <div id="legendContent">
@@ -524,41 +475,18 @@
                 </div>
             </div>
             <div class="config-panel" id="configPanel">
-                <div class="config-header">Range Configuration</div>
+                <div class="config-header">Range configuration</div>
                 <div id="configRows"></div>
                 <div class="config-actions">
-                    <button class="config-add-btn" id="configAddBtn">+ Add Range</button>
-                    <button class="config-reset-btn" id="configResetBtn">Reset to Default</button>
+                    <button class="config-add-btn" id="configAddBtn">+ Add range</button>
+                    <button class="config-reset-btn" id="configResetBtn">Reset to default values</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Ballistic Legend -->
-        <div class="legend" id="ballisticLegend" style="display: none;">
-            <h3>Ballistic Data Reference</h3>
-            <div class="ballistic-info">
-                <strong>Raw Ballistic Data Mode</strong><br>
-                Min/Max values are based on real ballistic data AX338 - SMK300gr, MV: 803m/s, 1000mb-15°C-50%RH.<br>
-                Data calculated to hit a 30cm target (0-400m) and 50cm target (401-1000m).<br>
-                Coverage: 51m to 1000m with exact values. For distances > 1000m, calculation at ±5%.
-            </div>
-            <div class="legend-item">
-                <div class="legend-dot range1"></div>
-                <span>51-225m : Min = 0, Decreasing Max</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-dot range2"></div>
-                <span>226-400m : Increasing Min, Progressive Max</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-dot range3"></div>
-                <span>401-1000m : Margin converging to ~1.5%</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Theme management
+        // Gestion du thème
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
 
@@ -585,46 +513,7 @@
 
         themeToggle.addEventListener('click', toggleTheme);
 
-        // Mode switching
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        let currentMode = 'percent';
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                currentMode = mode;
-                
-                // Update buttons
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                // Update UI
-                updateModeDisplay();
-                
-                // Recalculate all rows
-                for (let i = 0; i < 10; i++) {
-                    updateRow(i);
-                }
-            });
-        });
-
-        function updateModeDisplay() {
-            const percentLegend = document.getElementById('percentLegend');
-            const ballisticLegend = document.getElementById('ballisticLegend');
-            const description = document.getElementById('modeDescription');
-            
-            if (currentMode === 'percent') {
-                percentLegend.style.display = 'block';
-                ballisticLegend.style.display = 'none';
-                description.textContent = 'Calculate Min/Max values based on configurable percentage margins';
-            } else {
-                percentLegend.style.display = 'none';
-                ballisticLegend.style.display = 'block';
-                description.textContent = 'Calculate Min/Max values based on exact ballistic reference data';
-            }
-        }
-
-        // Generate 10 rows
+        // Génération des 10 lignes
         const tableBody = document.getElementById('tableBody');
 
         function createRow(index) {
@@ -645,99 +534,12 @@
             return row;
         }
 
-        // Create 10 rows
+        // Créer les 10 lignes
         for (let i = 0; i < 10; i++) {
             tableBody.appendChild(createRow(i));
         }
 
-        // ============================================
-        // PERCENTAGE MODE (from jd.html)
-        // ============================================
-        const defaultRanges = [
-            { min: 0, max: 300, percent: 15 },
-            { min: 301, max: 600, percent: 10 },
-            { min: 601, max: 1000, percent: 5 },
-            { min: 1001, max: null, percent: 5 }
-        ];
-
-        let currentRanges = [];
-
-        function loadConfig() {
-            const savedConfig = localStorage.getItem('jdConfig');
-            if (savedConfig) {
-                try {
-                    currentRanges = JSON.parse(savedConfig);
-                } catch (e) {
-                    currentRanges = [...defaultRanges];
-                }
-            } else {
-                currentRanges = [...defaultRanges];
-            }
-        }
-
-        function saveConfig() {
-            localStorage.setItem('jdConfig', JSON.stringify(currentRanges));
-            updateLegendDisplay();
-            if (currentMode === 'percent') {
-                for (let i = 0; i < 10; i++) {
-                    updateRow(i);
-                }
-            }
-        }
-
-        function updateLegendDisplay() {
-            const legendContent = document.getElementById('legendContent');
-            const colors = ['range1', 'range2', 'range3', 'range3'];
-            
-            let html = '';
-            currentRanges.forEach((range, index) => {
-                const colorClass = colors[index % colors.length];
-                let label = '';
-                if (range.max === null) {
-                    label = `> ${range.min}m`;
-                } else {
-                    label = `${range.min} - ${range.max}m`;
-                }
-                const alertText = range.max === null ? ' ⚠️ Alert' : '';
-                html += `
-                    <div class="legend-item">
-                        <div class="legend-dot ${colorClass}"></div>
-                        <span>${label} : ±${range.percent}%${alertText}</span>
-                    </div>
-                `;
-            });
-            legendContent.innerHTML = html;
-        }
-
-        function getPercent(distance) {
-            if (isNaN(distance) || distance < 0) return 0;
-            
-            for (const range of currentRanges) {
-                if (range.max === null) {
-                    if (distance >= range.min) {
-                        return range.percent;
-                    }
-                } else {
-                    if (distance >= range.min && distance <= range.max) {
-                        return range.percent;
-                    }
-                }
-            }
-            return currentRanges.length > 0 ? currentRanges[currentRanges.length - 1].percent : 5;
-        }
-
-        function calculatePercentValues(distance, percent) {
-            const min = distance * (1 - percent / 100);
-            const max = distance * (1 + percent / 100);
-            return {
-                min: Math.round(min),
-                max: Math.round(max)
-            };
-        }
-
-        // ============================================
-        // BALLISTIC DATA MODE (from jd2.html)
-        // ============================================
+        // Données de référence depuis dbjd.txt pour les distances 51-1000m
         const referenceData = {
             51: {min: 0, max: 506}, 52: {min: 0, max: 499}, 53: {min: 0, max: 492}, 54: {min: 0, max: 486},
             55: {min: 0, max: 479}, 56: {min: 0, max: 473}, 57: {min: 0, max: 467}, 58: {min: 0, max: 461},
@@ -979,36 +781,31 @@
             999: {min: 979, max: 1015}, 1000: {min: 980, max: 1016}
         };
 
-        function getBallisticValues(distance) {
+        // Fonction pour obtenir les valeurs min/max pour une distance donnée
+        function getMinMaxValues(distance) {
             if (isNaN(distance) || distance < 0) return null;
             
-            // For distances < 51m: min=0, max=distance*10
+            // Pour les distances dans la plage 51-1000m, utiliser les valeurs exactes
+            if (distance >= 51 && distance <= 1000) {
+                const distKey = Math.round(distance);
+                if (referenceData[distKey]) {
+                    return referenceData[distKey];
+                }
+            }
+            
+            // Pour les distances < 51m: min=0, max=distance*10 (comportement par défaut)
             if (distance < 51) {
                 return { min: 0, max: Math.round(distance * 10) };
             }
             
-            // For distances > 1000m: alerte et utiliser ±5%
-            if (distance > 1000) {
-                return { 
-                    min: Math.round(distance * 0.95), 
-                    max: Math.round(distance * 1.05),
-                    alert: true 
-                };
-            }
-            
-            // For distances in the 51-1000m range
-            const distKey = Math.round(distance);
-            if (referenceData[distKey]) {
-                return referenceData[distKey];
-            }
-            
-            // Fallback
-            return { min: 0, max: distance };
+            // Pour les distances > 1000m: alerter et utiliser ±5%
+            return { 
+                min: Math.round(distance * 0.95), 
+                max: Math.round(distance * 1.05),
+                alert: true 
+            };
         }
 
-        // ============================================
-        // MAIN CALCULATION FUNCTION
-        // ============================================
         function updateRow(index) {
             const input = document.getElementById(`distance-${index}`);
             const row = input.closest('.table-row');
@@ -1024,32 +821,21 @@
                 return;
             }
 
-            let values;
-            
-            if (currentMode === 'percent') {
-                // Percentage Mode
-                if (distance > 1000) {
-                    row.classList.add('alert');
-                } else {
-                    row.classList.remove('alert');
-                }
-                const percent = getPercent(distance);
-                values = calculatePercentValues(distance, percent);
+            // Vérifier si alerte (> 1000m)
+            if (distance > 1000) {
+                row.classList.add('alert');
             } else {
-                // Ballistic Mode
-                if (distance > 1000) {
-                    row.classList.add('alert');
-                } else {
-                    row.classList.remove('alert');
-                }
-                values = getBallisticValues(distance);
+                row.classList.remove('alert');
             }
 
+            // Utiliser les valeurs de référence
+            const values = getMinMaxValues(distance);
+            
             minCell.textContent = values.min;
             maxCell.textContent = values.max;
         }
 
-        // Event listeners for each input
+        // Écouteurs d'événements pour chaque input
         for (let i = 0; i < 10; i++) {
             const input = document.getElementById(`distance-${i}`);
             input.addEventListener('input', () => {
@@ -1058,19 +844,19 @@
             });
         }
 
-        // Save to localStorage
+        // Sauvegarde dans localStorage
         function saveData() {
             const data = [];
             for (let i = 0; i < 10; i++) {
                 const input = document.getElementById(`distance-${i}`);
                 data.push(input.value);
             }
-            localStorage.setItem('jdData', JSON.stringify(data));
+            localStorage.setItem('sniperData', JSON.stringify(data));
         }
 
-        // Load from localStorage
+        // Chargement depuis localStorage
         function loadData() {
-            const savedData = localStorage.getItem('jdData');
+            const savedData = localStorage.getItem('sniperData');
             if (savedData) {
                 const data = JSON.parse(savedData);
                 for (let i = 0; i < 10 && i < data.length; i++) {
@@ -1083,98 +869,7 @@
             }
         }
 
-        // Configuration panel
-        const configToggle = document.getElementById('configToggle');
-        const configPanel = document.getElementById('configPanel');
-
-        configToggle.addEventListener('click', () => {
-            configPanel.classList.toggle('open');
-        });
-
-        function createConfigRow(range, index) {
-            const div = document.createElement('div');
-            div.className = 'config-row';
-            
-            const isLast = range.max === null;
-            const maxValue = isLast ? '∞' : range.max;
-            
-            div.innerHTML = `
-                <input type="number" value="${range.min}" data-index="${index}" data-field="min" placeholder="Min">
-                <span style="color: var(--text-secondary);">-</span>
-                <input type="text" value="${maxValue}" data-index="${index}" data-field="max" placeholder="Max" ${isLast ? 'disabled' : ''}>
-                <span style="color: var(--text-secondary);">=</span>
-                <input type="number" value="${range.percent}" data-index="${index}" data-field="percent" class="config-percent" placeholder="%">
-                <span class="config-label">%</span>
-                ${currentRanges.length > 1 ? `<button class="config-remove-btn" data-index="${index}" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem;">×</button>` : ''}
-            `;
-            
-            return div;
-        }
-
-        function renderConfigRows() {
-            const container = document.getElementById('configRows');
-            container.innerHTML = '';
-            currentRanges.forEach((range, index) => {
-                container.appendChild(createConfigRow(range, index));
-            });
-            
-            // Add event listeners
-            document.querySelectorAll('.config-row input[data-field]').forEach(input => {
-                input.addEventListener('change', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    const field = e.target.dataset.field;
-                    let value = e.target.value;
-                    
-                    if (field === 'max' && value === '∞') {
-                        value = null;
-                    } else {
-                        value = parseInt(value) || 0;
-                    }
-                    
-                    currentRanges[index][field] = value;
-                    saveConfig();
-                });
-            });
-            
-            document.querySelectorAll('.config-remove-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    currentRanges.splice(index, 1);
-                    saveConfig();
-                    renderConfigRows();
-                });
-            });
-        }
-
-        // Add Range button
-        document.getElementById('configAddBtn').addEventListener('click', () => {
-            const lastRange = currentRanges[currentRanges.length - 1];
-            if (lastRange && lastRange.max === null) {
-                // Convert last infinite range to finite
-                lastRange.max = lastRange.min + 100;
-            }
-            
-            const newMin = lastRange ? lastRange.max + 1 : 0;
-            currentRanges.push({
-                min: newMin,
-                max: null,
-                percent: 5
-            });
-            
-            saveConfig();
-            renderConfigRows();
-        });
-
-        // Reset to Default button
-        document.getElementById('configResetBtn').addEventListener('click', () => {
-            if (confirm('Reset to default ranges?')) {
-                currentRanges = [...defaultRanges];
-                saveConfig();
-                renderConfigRows();
-            }
-        });
-
-        // Reset All button
+        // Bouton Reset
         const resetBtn = document.getElementById('resetBtn');
         resetBtn.addEventListener('click', () => {
             if (confirm('Do you really want to reset all values?')) {
@@ -1189,15 +884,156 @@
                     maxCell.textContent = '';
                     row.classList.remove('alert');
                 }
-                localStorage.removeItem('jdData');
+                localStorage.removeItem('sniperData');
             }
         });
 
-        // Initialization
+        // Configuration Panel
+        const configToggle = document.getElementById('configToggle');
+        const configPanel = document.getElementById('configPanel');
+        const configAddBtn = document.getElementById('configAddBtn');
+        const configResetBtn = document.getElementById('configResetBtn');
+        const configRows = document.getElementById('configRows');
+
+        let isConfigOpen = false;
+
+        configToggle.addEventListener('click', () => {
+            isConfigOpen = !isConfigOpen;
+            if (isConfigOpen) {
+                configPanel.classList.add('open');
+                renderConfigPanel();
+            } else {
+                configPanel.classList.remove('open');
+            }
+        });
+
+        function renderConfigPanel() {
+            configRows.innerHTML = '';
+            
+            currentRanges.forEach((range, index) => {
+                const row = document.createElement('div');
+                row.className = 'config-row';
+                row.dataset.index = index;
+
+                const isFirst = index === 0;
+                const isLast = index === currentRanges.length - 1;
+                const canDelete = currentRanges.length > 2;
+
+                row.innerHTML = `
+                    <span class="config-label">Range ${index + 1}</span>
+                    <input type="number" class="config-input config-min" value="${range.min}" 
+                           ${isFirst ? 'disabled' : ''} placeholder="Min">
+                    <span>-</span>
+                    <input type="number" class="config-input config-max" value="${range.max !== null ? range.max : ''}" 
+                           ${isLast ? 'disabled placeholder="∞"' : 'placeholder="Max"'}>
+                    <input type="number" class="config-input percent" value="${range.percent}" placeholder="%">
+                    <button class="config-delete" ${!canDelete ? 'disabled' : ''} title="Supprimer cette plage">🗑️</button>
+                `;
+
+                configRows.appendChild(row);
+
+                // Event listeners pour les inputs
+                const minInput = row.querySelector('.config-min');
+                const maxInput = row.querySelector('.config-max');
+                const percentInput = row.querySelector('.percent');
+                const deleteBtn = row.querySelector('.config-delete');
+
+                if (!isFirst) {
+                    minInput.addEventListener('input', () => updateConfigRow(index, 'min', minInput.value));
+                    minInput.addEventListener('blur', () => validateContinuity());
+                }
+
+                if (!isLast) {
+                    maxInput.addEventListener('input', () => updateConfigRow(index, 'max', maxInput.value));
+                    maxInput.addEventListener('blur', () => validateContinuity());
+                }
+
+                percentInput.addEventListener('input', () => updateConfigRow(index, 'percent', percentInput.value));
+
+                if (canDelete) {
+                    deleteBtn.addEventListener('click', () => deleteConfigRow(index));
+                }
+            });
+
+            updateButtonsState();
+        }
+
+        function updateConfigRow(index, field, value) {
+            const numValue = value === '' ? (field === 'max' ? null : 0) : parseInt(value);
+            currentRanges[index][field] = numValue;
+            saveConfig();
+        }
+
+        function deleteConfigRow(index) {
+            if (currentRanges.length <= 2) return;
+            currentRanges.splice(index, 1);
+            // Recalculer les continuités
+            ensureContinuity();
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function addConfigRow() {
+            if (currentRanges.length >= 10) return;
+            
+            const lastRange = currentRanges[currentRanges.length - 1];
+            if (lastRange.max !== null) return; // Ne devrait pas arriver
+
+            // Transformer l'ancienne dernière plage
+            const newMax = lastRange.min + 300; // Valeur par défaut
+            currentRanges[currentRanges.length - 1] = {
+                min: lastRange.min,
+                max: newMax,
+                percent: lastRange.percent
+            };
+
+            // Add new infinite range
+            currentRanges.push({
+                min: newMax + 1,
+                max: null,
+                percent: lastRange.percent
+            });
+
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function ensureContinuity() {
+            // Assurer la continuité : min d'une plage = max de la précédente + 1
+            for (let i = 1; i < currentRanges.length; i++) {
+                const prevMax = currentRanges[i - 1].max;
+                if (prevMax !== null && currentRanges[i].min !== prevMax + 1) {
+                    currentRanges[i].min = prevMax + 1;
+                }
+            }
+        }
+
+        function validateContinuity() {
+            ensureContinuity();
+            saveConfig();
+            renderConfigPanel();
+        }
+
+        function updateButtonsState() {
+            configAddBtn.disabled = currentRanges.length >= 10;
+        }
+
+        function resetConfig() {
+            if (confirm('Do you really want to reset ranges to default values?')) {
+                currentRanges = JSON.parse(JSON.stringify(defaultRanges));
+                saveConfig();
+                renderConfigPanel();
+            }
+        }
+
+        configAddBtn.addEventListener('click', addConfigRow);
+        configResetBtn.addEventListener('click', resetConfig);
+
+        // Initialisation
         loadTheme();
         loadConfig();
+        updateLegendDisplay();
         loadData();
-        renderConfigRows();
     </script>
 </body>
 </html>
