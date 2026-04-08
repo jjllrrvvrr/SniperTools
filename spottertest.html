@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Spotter Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .spotter-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .spotter-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        #gameCanvas {
+            background-color: #e0e0e0;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .game-controls {
+            margin: 20px 0;
+        }
+        
+        #message {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+        
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            text-align: left;
+            min-height: 100px;
+        }
+        
+        #results:empty {
+            display: none;
+        }
+        
+        /* Button text color in dark mode */
+        [data-theme="dark"] #startBtn {
+            color: #1a1a1a;
+        }
+        
+        .correction {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        
+        @media (max-width: 768px) {
+            #gameCanvas {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Spotter Test</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="spotter-container">
+                <div class="spotter-title">Spotter Test</div>
+                
+                <div class="game-controls">
+                    <button class="btn" id="startBtn" onclick="startGame()">START</button>
+                </div>
+                
+                <div id="message"></div>
+                
+                <canvas id="gameCanvas" width="500" height="500"></canvas>
+                
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Game logic
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const center = {x: 250, y: 250};
+        const mil = 25;
+
+        const zone0 = {w: 1*mil, h: 1*mil};
+        const zone3 = {w: 3*mil, h: 4.5*mil};
+        const zone6 = {w: zone3.w + 2*mil, h: zone3.h + 2*mil};
+
+        let results = [];
+        let isRunning = false;
+        let abortController = null;
+
+        function drawReticle() {
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 1;
+
+            ctx.beginPath();
+            ctx.moveTo(0, center.y);
+            ctx.lineTo(500, center.y);
+            ctx.moveTo(center.x, 0);
+            ctx.lineTo(center.x, 500);
+            ctx.stroke();
+
+            ctx.fillStyle = "#000";
+            for (let i = -10; i <= 10; i++) {
+                if (i === 0) continue;
+                let x = center.x + i * mil;
+                let y = center.y + i * mil;
+                ctx.beginPath();
+                ctx.arc(x, center.y, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(center.x, y, 3, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        function drawTargetBorder() {
+            ctx.fillStyle = "#555";
+            ctx.fillRect(
+                center.x - zone3.w/2,
+                center.y - zone3.h/2,
+                zone3.w,
+                zone3.h
+            );
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(
+                center.x - zone3.w/2,
+                center.y - zone3.h/2,
+                zone3.w,
+                zone3.h
+            );
+        }
+
+        function drawShot(shot) {
+            ctx.beginPath();
+            ctx.arc(shot.x, shot.y, 6, 0, Math.PI*2);
+            ctx.fillStyle = "red";
+            ctx.fill();
+        }
+
+        function generateShot() {
+            function gaussianRandom() {
+                let u = 0, v = 0;
+                while(u === 0) u = Math.random();
+                while(v === 0) v = Math.random();
+                return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            }
+            const stdDev = 2.5 * mil;
+            let x = center.x + gaussianRandom() * stdDev;
+            let y = center.y + gaussianRandom() * stdDev;
+            const padding = 20;
+            x = Math.max(padding, Math.min(500 - padding, x));
+            y = Math.max(padding, Math.min(500 - padding, y));
+            return {x, y};
+        }
+
+        function getCorrection(shot) {
+            let dx = shot.x - center.x;
+            let dy = shot.y - center.y;
+            let absX = Math.abs(dx);
+            let absY = Math.abs(dy);
+
+            if (absX <= zone0.w/2 && absY <= zone0.h/2)
+                return "/";
+            if (absX <= zone3.w/2 && absY <= zone3.h/2)
+                return buildCorrection(dx, dy, 3);
+            if (absX <= zone6.w/2 && absY <= zone6.h/2)
+                return buildCorrection(dx, dy, 6);
+            return buildCorrection(dx, dy, 12);
+        }
+
+        function buildCorrection(dx, dy, val) {
+            let horiz = "";
+            let vert = "";
+            if (Math.abs(dx) > 5)
+                horiz = dx > 0 ? "L"+val : "R"+val;
+            if (Math.abs(dy) > 5)
+                vert = dy > 0 ? "U"+val : "D"+val;
+            if (!vert) return "/ " + horiz;
+            if (!horiz) return vert + " /";
+            return vert + " " + horiz;
+        }
+
+        function wait(ms) {
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(resolve, ms);
+                if (abortController) {
+                    abortController.signal.addEventListener('abort', () => {
+                        clearTimeout(timeout);
+                        reject(new Error('Aborted'));
+                    }, { once: true });
+                }
+            });
+        }
+
+        async function startGame() {
+            if (isRunning) {
+                stopGame();
+                return;
+            }
+
+            isRunning = true;
+            abortController = new AbortController();
+            results = [];
+            document.getElementById("results").innerHTML = "";
+            document.getElementById("startBtn").textContent = "STOP";
+            document.getElementById("startBtn").style.backgroundColor = "#e74c3c";
+
+            try {
+                document.getElementById("message").innerText = "Spotter ready...";
+                await wait(1000);
+                if (!isRunning) return;
+
+                document.getElementById("message").innerText = "Sniper ready...";
+                await wait(1000);
+                if (!isRunning) return;
+
+                document.getElementById("message").innerText = "FIRE!";
+                await wait(800);
+                if (!isRunning) return;
+
+                for (let i = 0; i < 5; i++) {
+                    if (!isRunning) return;
+                    
+                    ctx.clearRect(0, 0, 500, 500);
+                    drawTargetBorder();
+                    drawReticle();
+
+                    let shot = generateShot();
+                    drawShot(shot);
+
+                    let correction = getCorrection(shot);
+                    results.push(`Shot ${i+1}: <span class="correction">${correction}</span>`);
+
+                    await wait(3000);
+                    if (!isRunning) return;
+                    
+                    ctx.clearRect(0, 0, 500, 500);
+                    await wait(500);
+                    if (!isRunning) return;
+                }
+
+                document.getElementById("message").innerText = "Test Complete";
+                document.getElementById("results").innerHTML = results.join("<br>");
+            } catch (e) {
+                if (e.message === 'Aborted') {
+                    // Test was stopped intentionally - already reset by stopGame
+                    return;
+                }
+                throw e;
+            } finally {
+                // Only reset UI elements, don't clear results if test completed
+                isRunning = false;
+                abortController = null;
+                const btn = document.getElementById("startBtn");
+                btn.textContent = "START";
+                btn.style.backgroundColor = "";
+            }
+        }
+
+        function stopGame() {
+            isRunning = false;
+            if (abortController) {
+                abortController.abort();
+                abortController = null;
+            }
+            resetGame();
+        }
+
+        function resetGame() {
+            isRunning = false;
+            abortController = null;
+            ctx.clearRect(0, 0, 500, 500);
+            drawTargetBorder();
+            drawReticle();
+            document.getElementById("message").innerText = "";
+            document.getElementById("results").innerHTML = "";
+            const btn = document.getElementById("startBtn");
+            btn.textContent = "START";
+            btn.style.backgroundColor = "";
+        }
+
+        drawTargetBorder();
+        drawReticle();
+        loadTheme();
+    </script>
+</body>
+</html>
