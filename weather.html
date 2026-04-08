@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Tools - Weather</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .weather-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .weather-search input {
+            flex: 1;
+        }
+        
+        .weather-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--accent-color);
+        }
+        .weather-error {
+            color: #e74c3c;
+            padding: 15px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        /* Weather Cards - Desktop Layout */
+        .weather-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .weather-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.2s;
+        }
+        .weather-card:hover {
+            border-color: var(--accent-color);
+        }
+        
+        /* Grid placement classes */
+        .card-location { grid-column: span 2; }
+        .card-current { grid-column: span 2; }
+        .card-temp { grid-column: span 1; }
+        .card-wind { grid-column: span 1; }
+        .card-pressure { grid-column: span 1; }
+        .card-humidity { grid-column: span 1; }
+        .card-uv { grid-column: span 1; }
+        .card-precip { grid-column: span 1; }
+        .card-moon { grid-column: span 1; }
+        .card-sun { grid-column: span 1; }
+        
+        .weather-card-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .weather-card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-height: 80px;
+        }
+        
+        /* Sun & Twilight: left-aligned labels, right-aligned values */
+        .card-sun .weather-card-content {
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        
+        /* Temperature: stretch content so Feels Like row can space between */
+        .card-temp .weather-card-content {
+            align-items: stretch;
+            width: 100%;
+        }
+        .card-temp .weather-row {
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .weather-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        
+        .weather-label {
+            color: var(--text-secondary);
+        }
+        
+        .weather-value {
+            color: var(--text-color);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+        
+        .weather-big {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-align: center;
+            margin: 5px 0;
+        }
+        
+        .weather-secondary {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+        
+        /* Current Conditions */
+        .card-current {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card-current .weather-card-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .weather-condition {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .weather-icon {
+            font-size: 3rem;
+        }
+        .weather-text {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        /* Location */
+        .card-location {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card-location .weather-card-title {
+            display: none;
+        }
+        .card-location .weather-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .location-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .location-time {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+        
+        /* Empty state */
+        .weather-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--border-color);
+        }
+        
+        /* UV colors */
+        .uv-low { color: #27ae60; }
+        .uv-moderate { color: #f1c40f; }
+        .uv-high { color: #e67e22; }
+        .uv-very-high { color: #e74c3c; }
+        
+        /* Tablet: 768px-1023px */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .weather-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .card-location { grid-column: span 3; }
+            .card-current { grid-column: span 1; }
+            .card-temp { grid-column: span 1; }
+            .card-wind { grid-column: span 1; }
+            .card-pressure { grid-column: span 1; }
+            .card-humidity { grid-column: span 1; }
+            .card-uv { grid-column: span 1; }
+            .card-precip { grid-column: span 1; }
+            .card-moon { grid-column: span 1; }
+            .card-sun { grid-column: span 1; }
+        }
+        
+        /* Mobile: <768px - 2 columns layout */
+        @media (max-width: 767px) {
+            .weather-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card-location { grid-column: span 2; }
+            .card-current { grid-column: span 2; }
+            .card-temp { grid-column: span 1; }
+            .card-wind { grid-column: span 1; }
+            .card-pressure { grid-column: span 1; }
+            .card-humidity { grid-column: span 1; }
+            .card-uv { grid-column: span 1; }
+            .card-precip { grid-column: span 1; }
+            .card-moon { grid-column: span 1; }
+            .card-sun { grid-column: span 1; }
+        }
+        
+        /* Very small mobile: <480px - stack all */
+        @media (max-width: 480px) {
+            .weather-cards {
+                grid-template-columns: 1fr;
+            }
+            .card-location { grid-column: span 1; }
+            .card-current { grid-column: span 1; }
+            .card-temp { grid-column: span 1; }
+            .card-wind { grid-column: span 1; }
+            .card-pressure { grid-column: span 1; }
+            .card-humidity { grid-column: span 1; }
+            .card-uv { grid-column: span 1; }
+            .card-precip { grid-column: span 1; }
+            .card-moon { grid-column: span 1; }
+            .card-sun { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <a href="index.html" aria-label="Back to home">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </a>
+                <div>
+                    <h1>Sniper Tools</h1>
+                    <div class="subtitle">Weather</div>
+                </div>
+            </div>
+            <div class="theme-toggle">
+                <button class="toggle-btn" id="themeToggle" data-active="false" aria-label="Toggle dark mode"><span class="slider"></span></button>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="weather-search">
+                <input type="text" id="city" class="form-input" placeholder="Enter location (city, coordinates, etc.)">
+                <button class="btn" onclick="searchWeather()">Search</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('sniperTheme');
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeToggle.setAttribute('data-active', 'false');
+                localStorage.setItem('sniperTheme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeToggle.setAttribute('data-active', 'true');
+                localStorage.setItem('sniperTheme', 'dark');
+            }
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        function parseWeatherData(data) {
+            const parts = data.trim().split(/\s+/);
+            
+            const windRaw = parts[5] || '';
+            const windMatch = windRaw.match(/^([←→↑↓↙↘↗↖]+)?(\d+)(km\/h|mph)$/);
+            let windKmh = '', windMs = '', windDir = '';
+            if (windMatch) {
+                windDir = windMatch[1] || '';
+                const speed = parseInt(windMatch[2]);
+                const unit = windMatch[3];
+                if (unit === 'km/h') {
+                    windKmh = speed;
+                    windMs = (speed / 3.6).toFixed(1);
+                } else {
+                    windKmh = (speed * 1.609).toFixed(0);
+                    windMs = (speed * 1.609 / 3.6).toFixed(1);
+                }
+            }
+            
+            const uv = parseInt(parts[11]) || 0;
+            let uvClass = 'uv-low';
+            let uvText = 'Low';
+            if (uv > 7) { uvClass = 'uv-very-high'; uvText = 'Very High'; }
+            else if (uv > 5) { uvClass = 'uv-high'; uvText = 'High'; }
+            else if (uv > 2) { uvClass = 'uv-moderate'; uvText = 'Moderate'; }
+            
+            // Format: %c %C %h %t %f %w %l %m %M %p %P %u %D %s %z %S %d %T %Z
+            // Indices:  0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18
+            
+            // Calculate daylight duration from sunrise and sunset
+            function calculateDaylight(sunrise, sunset) {
+                if (!sunrise || !sunset) return '';
+                try {
+                    const [h1, m1, s1] = sunrise.split(':').map(Number);
+                    const [h2, m2, s2] = sunset.split(':').map(Number);
+                    let minutes1 = h1 * 60 + m1;
+                    let minutes2 = h2 * 60 + m2;
+                    // Ensure sunrise is before sunset
+                    if (minutes2 < minutes1) {
+                        [minutes1, minutes2] = [minutes2, minutes1];
+                    }
+                    const diff = minutes2 - minutes1;
+                    const hours = Math.floor(diff / 60);
+                    const mins = diff % 60;
+                    return `${hours}h ${mins}m`;
+                } catch (e) {
+                    return '';
+                }
+            }
+            
+            // Parse times - NOTE: wttr.in returns sunrise and sunset swapped in the output
+            // %s should be sunrise but it returns evening time, %S should be sunset but returns morning time
+            let sunrise = parts[15] || ''; // Using Sunset index for Sunrise (corrected)
+            let sunset = parts[13] || ''; // Using Sunrise index for Sunset (corrected)
+            
+            // Fallback: detect by time value if still wrong
+            try {
+                const [hSunrise] = sunrise.split(':').map(Number);
+                const [hSunset] = sunset.split(':').map(Number);
+                // If sunrise hour > sunset hour, swap them
+                if (hSunrise > hSunset) {
+                    [sunrise, sunset] = [sunset, sunrise];
+                }
+            } catch (e) {
+                // Keep values if parsing fails
+            }
+            
+            return {
+                conditionIcon: parts[0] || '',
+                conditionText: parts[1] || '',
+                humidity: parts[2] || '',
+                temperature: parts[3] || '',
+                feelsLike: parts[4] || '',
+                windKmh: windKmh,
+                windMs: windMs,
+                windDir: windDir,
+                location: parts[6] || '',
+                moonPhase: parts[7] || '',
+                moonDay: parts[8] || '',
+                precipitation: parts[9] || '',
+                pressure: parts[10] || '',
+                uvIndex: parts[11] || '',
+                uvClass: uvClass,
+                uvText: uvText,
+                dawn: parts[12] || '',
+                sunrise: sunrise,
+                zenith: parts[14] || '',
+                sunset: sunset,
+                dusk: parts[16] || '',
+                daylightDuration: calculateDaylight(sunrise, sunset),
+                localTime: parts[17] || '',
+                timezone: parts[18] || ''
+            };
+        }
+
+        function displayWeather(data) {
+            const p = parseWeatherData(data);
+            
+            return `
+                <div class="weather-cards">
+                    <div class="weather-card card-location">
+                        <div class="weather-card-content">
+                            <div class="location-name">${p.location}</div>
+                            <div class="location-time">Time zone : ${p.timezone}</div>
+                            <div class="location-time">Local time : ${p.localTime}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-current">
+                        <div class="weather-card-title">Current Conditions</div>
+                        <div class="weather-card-content">
+                            <div class="weather-condition">
+                                <span class="weather-icon">${p.conditionIcon}</span>
+                                <span class="weather-text">${p.conditionText}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-temp">
+                        <div class="weather-card-title">Temperature</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big">${p.temperature}</div>
+                            <div class="weather-row">
+                                <span class="weather-label">Feels Like</span>
+                                <span class="weather-value">${p.feelsLike}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-wind">
+                        <div class="weather-card-title">Wind</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big">${p.windDir} ${p.windKmh}km/h</div>
+                            <div class="weather-secondary">${p.windMs} m/s</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-pressure">
+                        <div class="weather-card-title">Pressure</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big">${p.pressure}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-humidity">
+                        <div class="weather-card-title">Humidity</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big">${p.humidity}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-uv">
+                        <div class="weather-card-title">UV Index</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big ${p.uvClass}">${p.uvIndex}</div>
+                            <div class="weather-secondary ${p.uvClass}">${p.uvText}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-precip">
+                        <div class="weather-card-title">Precipitation</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big">${p.precipitation}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-moon">
+                        <div class="weather-card-title">Moon Phase</div>
+                        <div class="weather-card-content">
+                            <div class="weather-big" style="font-size: 2.5rem;">${p.moonPhase}</div>
+                            <div class="weather-secondary">Day ${p.moonDay}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-card card-sun">
+                        <div class="weather-card-title">Sun & Twilight</div>
+                        <div class="weather-card-content">
+                            <div class="weather-row">
+                                <span class="weather-label">Dawn</span>
+                                <span class="weather-value">${p.dawn}</span>
+                            </div>
+                            <div class="weather-row">
+                                <span class="weather-label">Sunrise</span>
+                                <span class="weather-value">${p.sunrise}</span>
+                            </div>
+                            <div class="weather-row">
+                                <span class="weather-label">Zenith</span>
+                                <span class="weather-value">${p.zenith}</span>
+                            </div>
+                            <div class="weather-row">
+                                <span class="weather-label">Sunset</span>
+                                <span class="weather-value">${p.sunset}</span>
+                            </div>
+                            <div class="weather-row">
+                                <span class="weather-label">Dusk</span>
+                                <span class="weather-value">${p.dusk}</span>
+                            </div>
+                            <div class="weather-row" style="margin-top: 5px; padding-top: 8px; border-top: 1px solid var(--border-color);">
+                                <span class="weather-label">Daylight</span>
+                                <span class="weather-value">${p.daylightDuration}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function searchWeather() {
+            const city = document.getElementById("city").value;
+            const resultDiv = document.getElementById("result");
+            
+            if (!city.trim()) {
+                resultDiv.innerHTML = '<div class="weather-error">Please enter a location.</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="weather-loading">Loading...</div>';
+            
+            const format = "%c %C %h %t %f %w %l %m %M %p %P %u %D %s %z %S %d %T %Z";
+            const url = "https://wttr.in/" + encodeURIComponent(city) + "?format=" + format + "&lang=en";
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("Weather data unavailable");
+                    return response.text();
+                })
+                .then(data => {
+                    if (data.includes("Unknown") || data.includes("Sorry")) {
+                        throw new Error("Location not found");
+                    }
+                    resultDiv.innerHTML = displayWeather(data);
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<div class="weather-error">' + error.message + '</div>';
+                });
+        }
+
+        document.getElementById("city").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") searchWeather();
+        });
+
+        document.getElementById("result").innerHTML = '<div class="weather-empty">Enter a location to get weather data.</div>';
+
+        loadTheme();
+    </script>
+</body>
+</html>
