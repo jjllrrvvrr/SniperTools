@@ -372,27 +372,50 @@
         });
 
         function drawReticle() {
-            ctx.strokeStyle = "#000";
-            ctx.lineWidth = 1;
-
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const crosshairColor = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)';
+            const tickColor = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.5)';
+            const labelColor = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+            const centerDotColor = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
+            const pixelsPerMil = 25; // 500 / 20
+            
+            // Draw crosshair lines
+            ctx.strokeStyle = crosshairColor;
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.moveTo(0, center.y);
-            ctx.lineTo(500, center.y);
             ctx.moveTo(center.x, 0);
             ctx.lineTo(center.x, 500);
+            ctx.moveTo(0, center.y);
+            ctx.lineTo(500, center.y);
             ctx.stroke();
 
-            ctx.fillStyle = "#000";
-            for (let i = -10; i <= 10; i++) {
-                if (i === 0) continue;
-                let x = center.x + i * mil;
-                let y = center.y + i * mil;
+            // Draw center dot
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = centerDotColor;
+            ctx.fill();
+
+            // Draw mil ticks
+            ctx.strokeStyle = tickColor;
+
+            for (let i = 1; i <= 10; i++) {
+                const tickSize = (i % 5 === 0) ? 10 : 5;
+                
+                // Vertical ticks
                 ctx.beginPath();
-                ctx.arc(x, center.y, 3, 0, Math.PI*2);
-                ctx.fill();
+                ctx.moveTo(center.x - tickSize, center.y + i * pixelsPerMil);
+                ctx.lineTo(center.x + tickSize, center.y + i * pixelsPerMil);
+                ctx.moveTo(center.x - tickSize, center.y - i * pixelsPerMil);
+                ctx.lineTo(center.x + tickSize, center.y - i * pixelsPerMil);
+                ctx.stroke();
+
+                // Horizontal ticks
                 ctx.beginPath();
-                ctx.arc(center.x, y, 3, 0, Math.PI*2);
-                ctx.fill();
+                ctx.moveTo(center.x + i * pixelsPerMil, center.y - tickSize);
+                ctx.lineTo(center.x + i * pixelsPerMil, center.y + tickSize);
+                ctx.moveTo(center.x - i * pixelsPerMil, center.y - tickSize);
+                ctx.lineTo(center.x - i * pixelsPerMil, center.y + tickSize);
+                ctx.stroke();
             }
         }
 
